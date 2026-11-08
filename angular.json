@@ -67,7 +67,8 @@
               "buildTarget": "delishioFrontend:build:production"
             },
             "development": {
-              "buildTarget": "delishioFrontend:build:development"
+              "buildTarget": "delishioFrontend:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

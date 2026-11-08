@@ -1,0 +1,81 @@
+<main class="layout" [attr.lang]="language()" [attr.aria-busy]="busy()">
+  @let text = t();
+  @let bill = receipt();
+  <header class="top screen-only">
+    <div><strong>Delishio</strong><span>{{ text.waiter }}</span></div>
+    @if (signedIn()) {
+      <button type="button" class="secondary" [disabled]="busy()" (click)="signOut()">{{ text.signOut }}</button>
+    }
+  </header>
+
+  @if (busy()) { <p class="notice screen-only" role="status">{{ text.working }}</p> }
+  @if (error()) { <p class="notice error screen-only" role="alert">{{ error() }}</p> }
+
+  @if (!signedIn()) {
+    <section class="card screen-only" aria-labelledby="access-title">
+      <h1 id="access-title">{{ text.access }}</h1>
+      @if (ticket()) {
+        <form #verification="ngForm" (ngSubmit)="verify(code.value)">
+          <label>{{ text.code }}<input #code name="code" ngModel required pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></label>
+          <button type="submit" [disabled]="busy() || verification.invalid">{{ text.verify }}</button>
+          <button type="button" class="secondary" [disabled]="busy()" (click)="cancelVerification()">{{ text.back }}</button>
+        </form>
+      } @else {
+        <form #credentials="ngForm" (ngSubmit)="signIn(login.value, password.value); passwordField.reset('')">
+          <label>{{ text.login }}<input #login name="login" ngModel required autocomplete="username" maxlength="255"></label>
+          <label>{{ text.password }}<input #password type="password" name="password" ngModel #passwordField="ngModel" required autocomplete="current-password"></label>
+          <button type="submit" [disabled]="busy() || credentials.invalid">{{ text.signIn }}</button>
+        </form>
+      }
+    </section>
+  } @else if (bill) {
+    <article class="card receipt" aria-labelledby="prebill-title">
+      <p class="eyebrow">{{ restaurantName() }}</p>
+      <h1 id="prebill-title">{{ text.prebill }}</h1>
+      <p class="order-label">{{ text.order }} #{{ bill.order.id }} · {{ text[bill.order.service_type] }}
+        @if (bill.order.table_number) { · {{ text.table }} {{ bill.order.table_number }} }
+      </p>
+      <dl>
+        <div><dt>{{ text.subtotal }}</dt><dd>{{ money(bill.quote.subtotal, bill.quote.currency) }}</dd></div>
+        <div><dt>{{ text.discounts }}</dt><dd>{{ money(bill.quote.discount_total, bill.quote.currency) }}</dd></div>
+        <div><dt>{{ text.taxes }}</dt><dd>{{ money(bill.quote.tax_total, bill.quote.currency) }}</dd></div>
+        @if (bill.order.service_type === 'delivery' && bill.order.delivery_fee !== null) {
+          <div><dt>{{ text.shipping }}</dt><dd>{{ money(bill.order.delivery_fee, bill.quote.currency) }}</dd></div>
+        }
+        <div class="total"><dt>{{ text.total }}</dt><dd>{{ money(bill.quote.total, bill.quote.currency) }}</dd></div>
+      </dl>
+    </article>
+    <nav class="actions screen-only">
+      <button type="button" (click)="print()" [disabled]="busy()">{{ text.print }}</button>
+      <button type="button" class="secondary" (click)="backToOrders()" [disabled]="busy()">{{ text.backToOrders }}</button>
+    </nav>
+  } @else {
+    <section class="card screen-only" aria-labelledby="orders-title">
+      <div class="section-header">
+        <h1 id="orders-title">{{ text.orders }}</h1>
+        <button type="button" class="secondary" (click)="showPage(page())" [disabled]="busy()">{{ text.refresh }}</button>
+      </div>
+      <ul class="orders">
+        @for (order of orders(); track order.id) {
+          <li>
+            <div><strong>{{ text.order }} #{{ order.id }}</strong>
+              <span>{{ text[order.service_type] }}
+                @if (order.table_number) { · {{ text.table }} {{ order.table_number }} }
+              </span>
+            </div>
+            <button type="button" (click)="generate(order)" [disabled]="busy()">{{ text.generate }}</button>
+          </li>
+        } @empty {
+          @if (!busy() && !error()) { <li>{{ text.empty }}</li> }
+        }
+      </ul>
+      @if (lastPage() > 1) {
+        <nav class="pager">
+          <button type="button" class="secondary" (click)="showPage(page() - 1)" [disabled]="busy() || page() <= 1">{{ text.previous }}</button>
+          <span>{{ text.page }} {{ page() }} / {{ lastPage() }}</span>
+          <button type="button" class="secondary" (click)="showPage(page() + 1)" [disabled]="busy() || page() >= lastPage()">{{ text.next }}</button>
+        </nav>
+      }
+    </section>
+  }
+</main>

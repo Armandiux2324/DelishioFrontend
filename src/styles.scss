@@ -1,1 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+html { color-scheme: light dark; }
+body { margin: 0; background: #f2f2f7; font: 1rem/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+@media (prefers-color-scheme: dark) {
+  body { background: #101012; }
+}
+
+@media print {
+  html { color-scheme: light; }
+  body { background: #fff; }
+}
