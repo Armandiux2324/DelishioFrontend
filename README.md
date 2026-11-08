@@ -1,5 +1,11 @@
 # DelishioFrontend
 
+## Precuenta del Mesero
+
+Inicia el backend en `http://127.0.0.1:8000` y ejecuta `npm ci` y `npm start` en este repositorio. Abre `/mesero`, inicia sesión con una cuenta de mesero y elige **Generar precuenta** en una orden confirmada con caja abierta. **Imprimir precuenta** abre el diálogo del navegador.
+
+El proxy de desarrollo reenvía `/api` al backend. Para producción, publica el frontend y enruta `/api` al backend en el mismo origen.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
 
 ## Development server
