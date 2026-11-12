@@ -11,6 +11,7 @@ import { SessionService } from '../../services/session.service';
 })
 export class SessionHeaderComponent {
   @Input() area = '';
+  @Input() compact = false;
   protected readonly session = inject(SessionService);
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);

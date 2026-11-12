@@ -1,0 +1,21 @@
+<nav [attr.aria-label]="label">
+  <ul>
+    @for (item of items; track item.label.en) {
+      @let text = english ? item.label.en : item.label.es;
+      <li>
+        @if (item.route) {
+          <a [routerLink]="item.route" routerLinkActive="active" ariaCurrentWhenActive="page"
+            [routerLinkActiveOptions]="{ paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }" [attr.title]="text" (click)="followed.emit()">
+            <svg [lucideIcon]="item.icon" [size]="20" aria-hidden="true" ></svg>
+            <span class="label">{{ text }}</span>
+          </a>
+        } @else {
+          <button type="button" disabled [attr.title]="text + (english ? ' — Coming soon' : ' — Próximamente')">
+            <svg [lucideIcon]="item.icon" [size]="20" aria-hidden="true" ></svg>
+            <span class="copy"><span class="label">{{ text }}</span><span class="soon">{{ english ? 'Coming soon' : 'Próximamente' }}</span></span>
+          </button>
+        }
+      </li>
+    }
+  </ul>
+</nav>

@@ -1,0 +1,40 @@
+:host { display: block; min-height: 100dvh; background: var(--d-surface); color: var(--d-ink); font-family: var(--d-font); }
+.shell { display: flex; min-height: 100dvh; }
+.skip-link { position: fixed; top: -6rem; inset-inline-start: 1rem; z-index: 100; padding: 1rem; border-radius: var(--d-radius-sm); color: var(--d-panel); background: var(--d-brand); }
+.skip-link:focus { top: 1rem; }
+.sidebar { position: sticky; top: 0; display: flex; flex-direction: column; flex-shrink: 0; box-sizing: border-box; width: var(--d-nav-width); height: 100dvh; overflow-y: auto; padding: 1.5rem 1rem 1rem; background: var(--d-panel); border-inline-end: 1px solid var(--d-line); }
+.brand { display: flex; align-items: center; gap: .75rem; color: var(--d-ink); text-decoration: none; }
+.brand:focus-visible { outline: 3px solid var(--d-brand); outline-offset: 4px; border-radius: .5rem; }
+.brand-symbol { display: grid; place-items: center; flex-shrink: 0; width: 2.125rem; height: 2.125rem; border-radius: .625rem; background: var(--d-brand); color: var(--d-panel); font-size: 1.125rem; font-weight: 700; }
+.brand-name { font-size: 1.25rem; font-weight: 700; letter-spacing: -.04em; }
+.nav-caption { margin: 2.5rem .75rem 1rem; color: var(--d-muted); font-size: .625rem; font-weight: 600; letter-spacing: .09em; }
+.sidebar-footer { display: flex; align-items: center; gap: .75rem; margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--d-line); }
+.small { background: var(--d-neutral-soft); color: var(--d-ink); font-size: .875rem; }
+.identity { min-width: 0; font-size: .8125rem; overflow-wrap: anywhere; }
+.identity small { display: block; margin-top: .25rem; font-size: .75rem; color: var(--d-muted); }
+.workspace { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.topbar { display: flex; align-items: center; gap: .5rem; min-height: 4.5rem; padding: 0 clamp(1rem, 3vw, 2.5rem); border-bottom: 1px solid var(--d-line); background: var(--d-panel); }
+app-session-header { flex: 1; min-width: 0; }
+.menu-toggle { display: none; padding-inline: .5rem; }
+main { box-sizing: border-box; flex: 1; width: 100%; max-width: 92rem; padding: clamp(1.25rem, 3vw, 2.5rem); margin: 0 auto; }
+main:focus { outline: none; }
+.workspace-footer { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1.25rem 2.5rem; color: var(--d-muted); font-size: .75rem; }
+.drawer-brand { margin-bottom: 2rem; }
+:host([data-mode=customer]) .shell { flex-direction: column; max-width: 48rem; margin: 0 auto; background: var(--d-panel); border-inline: 1px solid var(--d-line); }
+:host([data-mode=customer]) .topbar { position: sticky; top: 0; z-index: 10; padding: .75rem 1.25rem; }
+:host([data-mode=customer]) main { padding: 1.5rem 1.25rem; }
+:host([data-mode=customer]) .workspace-footer { display: none; }
+.bottom-navigation { position: sticky; bottom: 0; z-index: 10; }
+@media (min-width: 48rem) and (max-width: 75rem) {
+  .sidebar { width: 4.5rem; padding-inline: .75rem; align-items: center; }
+  .sidebar .brand-name, .nav-caption, .identity { display: none; }
+  .sidebar app-navigation { width: 100%; margin-top: 1.5rem; }
+  .sidebar-footer { width: 100%; justify-content: center; }
+}
+@media (max-width: 47.99rem) {
+  .sidebar { display: none; }
+  .menu-toggle { display: inline-flex; }
+  .workspace-footer { padding: 1rem 1.25rem; }
+  .customer-brand .brand-name { display: none; }
+}
+@media print { .sidebar, .topbar, .workspace-footer, .bottom-navigation, .skip-link { display: none !important; } main { max-width: none; padding: 0; } }

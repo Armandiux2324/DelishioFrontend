@@ -1,0 +1,47 @@
+@let english = session.user?.locale === 'en';
+<a class="skip-link" href="#main-content">{{ english ? 'Skip to content' : 'Saltar al contenido' }}</a>
+<div class="shell">
+  @if (mode === 'admin') {
+    <aside class="sidebar">
+      <a class="brand" [routerLink]="session.home" aria-label="Delishio">
+        <span class="brand-symbol" aria-hidden="true">D</span><span class="brand-name">Delishio</span>
+      </a>
+      <p class="nav-caption">{{ english ? 'WORKSPACE' : 'ESPACIO DE TRABAJO' }}</p>
+      <app-navigation [items]="navigation" [english]="english" [label]="english ? 'Main navigation' : 'Navegación principal'" />
+      <div class="sidebar-footer"><span class="brand-symbol small">{{ session.user?.name?.slice(0, 1) }}</span><span class="identity">{{ session.user?.name }}<small>{{ area }}</small></span></div>
+    </aside>
+  }
+  <div class="workspace">
+    <div class="topbar">
+      @if (mode === 'admin') {
+        <button dButton variant="ghost" class="menu-toggle" type="button"
+          [attr.aria-label]="english ? 'Open navigation' : 'Abrir navegación'"
+          [attr.aria-controls]="menu.id" [attr.aria-expanded]="menuOpen()"
+          (click)="menu.open(); menuOpen.set(true)">
+          <svg lucideIcon="menu" [size]="22" aria-hidden="true" ></svg>
+        </button>
+      } @else {
+        <a class="brand customer-brand" [routerLink]="session.home" aria-label="Delishio">
+          <span class="brand-symbol" aria-hidden="true">D</span><span class="brand-name">Delishio</span>
+        </a>
+      }
+      <app-session-header [area]="area" [compact]="true" />
+    </div>
+    <main id="main-content" tabindex="-1">
+      <ng-content />
+    </main>
+    <footer class="workspace-footer"><span>Delishio</span><span>{{ area }}</span></footer>
+  </div>
+  @if (mode === 'customer') {
+    <app-navigation class="bottom-navigation" appearance="tabs" [items]="navigation" [english]="english"
+      [label]="english ? 'Customer navigation' : 'Navegación del cliente'" />
+  }
+</div>
+<app-dialog #menu kind="drawer" [title]="english ? 'Navigation' : 'Navegación'"
+  [closeLabel]="english ? 'Close navigation' : 'Cerrar navegación'" (closed)="menuOpen.set(false)">
+  <a class="brand drawer-brand" [routerLink]="session.home" (click)="menu.close()">
+    <span class="brand-symbol" aria-hidden="true">D</span><span class="brand-name">Delishio</span>
+  </a>
+  <app-navigation appearance="drawer" [items]="navigation" [english]="english"
+    [label]="english ? 'Mobile navigation' : 'Navegación móvil'" (followed)="menu.close()" />
+</app-dialog>

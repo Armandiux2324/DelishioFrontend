@@ -1,2 +1,13 @@
-<app-session-header [area]="session.user?.locale === 'en' ? 'Super Admin' : 'Super Administrador'" />
-<router-outlet />
+@let english = session.user?.locale === 'en';
+<app-shell [area]="english ? 'Super Admin' : 'Super Administrador'" [navigation]="navigation">
+  <router-outlet #page="outlet" />
+  @if (!page.isActivated) {
+    <app-page-heading [title]="english ? 'Restaurants' : 'Restaurantes'"
+      [subtitle]="english ? 'Restaurant administration' : 'Administración de restaurantes'" />
+    <app-panel>
+      <app-feedback kind="pending"
+        [title]="english ? 'Your restaurants, in one place' : 'Tus restaurantes, en un solo lugar'"
+        [message]="english ? 'Restaurant registration and administration will be available here in the next module.' : 'El registro y la administración de restaurantes estarán disponibles aquí en el siguiente módulo.'" />
+    </app-panel>
+  }
+</app-shell>

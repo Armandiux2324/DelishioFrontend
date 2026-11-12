@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { superAdminNavigation } from '../layout-navigation';
 import { SessionService } from '../../services/session.service';
 
 @Component({
@@ -7,5 +8,6 @@ import { SessionService } from '../../services/session.service';
   templateUrl: './super-admin-layout.component.html',
 })
 export class SuperAdminLayoutComponent {
+  protected readonly navigation = superAdminNavigation;
   protected readonly session = inject(SessionService);
 }

@@ -19,6 +19,17 @@ La aplicación usa NgModules y Axios. `AppRoutingModule` carga cada área bajo d
 
 El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. La precuenta es la página funcional de Mesero. Las demás áreas contienen el layout base para incorporar sus páginas.
 
+## Base visual compartida
+
+Los layouts de Super Admin y Administrador comparten navegación lateral y un menú móvil basado en el diálogo nativo. Cliente utiliza navegación inferior. El modo claro u oscuro sigue la preferencia del sistema.
+
+- `src/styles/_tokens.scss` centraliza colores, tipografía, radios y espaciado.
+- `src/styles/_controls.scss` contiene los estilos de formularios, tablas, botones y etiquetas de estado.
+- `SharedModule` exporta `AppShellComponent`, `NavigationComponent`, `PageHeadingComponent`, `PanelComponent`, `FeedbackComponent`, `DialogComponent` y la directiva `dButton`.
+- `DialogComponent.open()` abre el diálogo y `close()` lo cierra. El diálogo tiene título accesible y restaura el foco al cerrarse.
+- `layout-navigation.ts` define las etiquetas en español e inglés. Las secciones que todavía no tienen página aparecen deshabilitadas con la indicación Próximamente.
+
+Las etiquetas `.d-badge[data-status]` conservan los estados `pending`, `in_preparation`, `ready`, `cancelled`, `error`, `suspended` y `active`. El texto visible debe localizarse al consumirlas. Los controles nativos usan `d-field`, `d-input`, `d-select`, `d-field-hint` y `d-field-error`; cada campo debe conservar su etiqueta y enlazar sus mensajes con `aria-describedby`.
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
 
 ## Development server
