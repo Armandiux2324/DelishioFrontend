@@ -17,7 +17,7 @@ La aplicación usa NgModules y Axios. `AppRoutingModule` carga cada área bajo d
 - `guards/` verifica sesión y rol. `shared/` reúne componentes reutilizables.
 - `environments/` define la URL de la API. La compilación de producción reemplaza `environment.ts` por `environment.prod.ts`. Ambos usan `/api/v1` con la configuración actual.
 
-El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. La precuenta es la página funcional de Mesero. Las demás áreas contienen el layout base para incorporar sus páginas.
+El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador, Chef y Cliente conservan el layout base para incorporar sus páginas.
 
 ## Base visual compartida
 
@@ -30,6 +30,12 @@ Los layouts de Super Admin y Administrador comparten navegación lateral y un me
 - `layout-navigation.ts` define las etiquetas en español e inglés. Las secciones que todavía no tienen página aparecen deshabilitadas con la indicación Próximamente.
 
 Las etiquetas `.d-badge[data-status]` conservan los estados `pending`, `in_preparation`, `ready`, `cancelled`, `error`, `suspended` y `active`. El texto visible debe localizarse al consumirlas. Los controles nativos usan `d-field`, `d-input`, `d-select`, `d-field-hint` y `d-field-error`; cada campo debe conservar su etiqueta y enlazar sus mensajes con `aria-describedby`.
+## Restaurantes del Super Admin
+
+Inicia sesión con una cuenta Super Admin (incluye OTP). En `/super-admin` se muestra el listado paginado por el backend, con detalle de cada restaurante.
+
+**Nuevo restaurante** solicita nombre, dirección, teléfono y los datos del Administrador: nombre, correo y contraseña confirmada. **Ver detalle** permite editar la información general, el logo y la cuenta Stripe Connect, así como activar, suspender y eliminar con confirmación. La eliminación es una baja lógica y conserva el historial según el backend. Laravel aplica las reglas de acceso y las validaciones.
+
 ## Autenticación y perfil
 
 El acceso comienza en `/login`. Desde ahí se puede registrar una cuenta de Cliente en `/register`, verificar el correo en `/verify-email` y recuperar la contraseña mediante `/forgot-password` y `/reset-password`.

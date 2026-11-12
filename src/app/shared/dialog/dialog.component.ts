@@ -13,6 +13,7 @@ export class DialogComponent {
   @Input({ required: true }) title = '';
   @Input() closeLabel = 'Cerrar';
   @Input() kind: 'sheet' | 'drawer' = 'sheet';
+  @Input() busy = false;
   @Output() closed = new EventEmitter<void>();
   @ViewChild('dialog', { static: true }) private dialog!: ElementRef<HTMLDialogElement>;
   readonly id = 'd-dialog-' + nextDialogId++;
@@ -30,7 +31,11 @@ export class DialogComponent {
   }
 
   protected backdrop(event: MouseEvent): void {
-    if (event.target === this.dialog.nativeElement) this.close();
+    if (!this.busy && event.target === this.dialog.nativeElement) this.close();
+  }
+
+  protected cancel(event: Event): void {
+    if (this.busy) event.preventDefault();
   }
 
   protected afterClose(): void {

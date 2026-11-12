@@ -143,4 +143,21 @@ describe('ApiService using Axios', () => {
     expect(JSON.parse(adapter.calls.mostRecent().args[0].data)).toEqual({ password: 'current-password' });
   });
 
+
+  it('uses authenticated restaurant endpoints, pagination and PUT for editing', async () => {
+    const payload = { name: 'Test', address: 'Street', phone: '123', logo_url: null, stripe_account_id: null };
+    await api.getRestaurants(2);
+    await api.getRestaurant(12);
+    await api.createRestaurant({ name: 'Test', address: 'Street', phone: '123', admin_name: 'Admin', admin_email: 'a@example.test', admin_password: 'Password123!', admin_password_confirmation: 'Password123!' });
+    await api.updateRestaurant(12, payload);
+    await api.activateRestaurant(12);
+    await api.suspendRestaurant(12);
+    await api.deleteRestaurant(12);
+    const calls = adapter.calls.allArgs().map(([config]) => config);
+    expect(calls.map(config => config.method)).toEqual(['get', 'get', 'post', 'put', 'post', 'post', 'delete']);
+    expect(calls.map(config => config.url)).toEqual(['', '/12', '', '/12', '/12/activate', '/12/suspend', '/12'].map(path => '/auth/super-admin/restaurants' + path));
+    expect(calls[0].params).toEqual({ page: 2 });
+    expect(JSON.parse(calls[3].data)).toEqual(payload);
+    for (const config of calls) expect(config.headers.get('Authorization')).toBe('Bearer token');
+  });
 });

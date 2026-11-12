@@ -1,0 +1,31 @@
+:host { display: block; }
+.notice { padding: .75rem 1rem; margin: 0 0 1.25rem; color: var(--d-success); background: var(--d-success-soft); border-radius: var(--d-radius-sm); font-size: .875rem; }
+.table-scroll { position: relative; border: 0; border-radius: 0; }
+.table-scroll:focus-visible { outline: 3px solid var(--d-brand); outline-offset: -3px; }
+table { min-width: 42rem; }
+th { text-transform: uppercase; letter-spacing: .035em; white-space: nowrap; }
+td:first-child { min-width: 12rem; max-width: 22rem; overflow-wrap: anywhere; }
+td { overflow-wrap: anywhere; }
+strong { font-weight: 600; }
+.muted { color: var(--d-muted); font-size: .875rem; line-height: 1.65; }
+.address { display: block; margin-top: .25rem; font-size: .8125rem; }
+.detail-link { color: var(--d-brand); min-width: 8rem; }
+.pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; border-top: 1px solid var(--d-line); color: var(--d-muted); font-size: .8125rem; }
+.pagination nav, .actions { display: flex; justify-content: flex-end; gap: .75rem; flex-wrap: wrap; }
+form, fieldset { display: grid; gap: 1rem; }
+fieldset { margin: .5rem 0 0; padding: 1rem; border: 1px solid var(--d-line); border-radius: var(--d-radius-sm); min-width: 0; }
+legend { padding-inline: .375rem; font-size: .9375rem; font-weight: 600; }
+fieldset p { margin: 0; }
+.actions { margin-top: 1.5rem; }
+.detail-title { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+h3 { margin: 0; font-size: 1.25rem; overflow-wrap: anywhere; }
+dl { margin: 1.25rem 0; }
+dl > div { display: grid; grid-template-columns: minmax(6rem, 1fr) minmax(0, 2fr); gap: .75rem; padding: .75rem 0; border-bottom: 1px solid var(--d-line); font-size: .875rem; }
+dt { color: var(--d-muted); }
+dd { margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+.confirmation-name { font-weight: 600; overflow-wrap: anywhere; }
+input.ng-invalid.ng-touched { border-color: var(--d-danger); }
+@media (max-width: 30rem) {
+  .actions .d-button { flex: 1 1 100%; }
+  dl > div { grid-template-columns: 1fr; gap: .25rem; }
+}
