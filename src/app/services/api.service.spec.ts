@@ -194,4 +194,19 @@ describe('ApiService using Axios', () => {
       for (const config of calls) expect(config.headers.get('Authorization')).toBe('Bearer token');
     }
   });
+
+  it('uses authenticated inventory endpoints, partial PUT and immutable loss requests', async () => {
+    await api.getInventoryItems(2); await api.getInventoryItem(10);
+    await api.createInventoryItem({ name:'Flour',unit:'kg',unit_cost:'12.3456',current_stock:'15.125' });
+    await api.updateInventoryItem(10,{ current_stock:'0' }); await api.deleteInventoryItem(10);
+    await api.getInventoryLosses(3); await api.getInventoryLoss(20);
+    await api.createInventoryLoss({inventory_item_id:10,quantity:'0.125',reason:'Damaged'});
+    const calls=adapter.calls.allArgs().map(([config])=>config);
+    expect(calls.map(config=>config.method)).toEqual(['get','get','post','put','delete','get','get','post']);
+    expect(calls.map(config=>config.url)).toEqual(['/admin/inventory-items','/admin/inventory-items/10','/admin/inventory-items','/admin/inventory-items/10','/admin/inventory-items/10','/admin/inventory-losses','/admin/inventory-losses/20','/admin/inventory-losses']);
+    expect(calls[0].params).toEqual({page:2});expect(calls[5].params).toEqual({page:3});
+    expect(JSON.parse(calls[3].data)).toEqual({current_stock:'0'});
+    expect(JSON.parse(calls[7].data)).toEqual({inventory_item_id:10,quantity:'0.125',reason:'Damaged'});
+    for(const config of calls)expect(config.headers.get('Authorization')).toBe('Bearer token');
+  });
 });

@@ -17,7 +17,7 @@ La aplicación usa NgModules y Axios. `AppRoutingModule` carga cada área bajo d
 - `guards/` verifica sesión y rol. `shared/` reúne componentes reutilizables.
 - `environments/` define la URL de la API. La compilación de producción reemplaza `environment.ts` por `environment.prod.ts`. Ambos usan `/api/v1` con la configuración actual.
 
-El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone del catálogo y de la configuración del restaurante. Chef y Cliente conservan el layout base para incorporar sus páginas.
+El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone del catálogo, inventario y configuración del restaurante. Chef y Cliente conservan el layout base para incorporar sus páginas.
 
 ## Base visual compartida
 
@@ -35,6 +35,16 @@ Las etiquetas `.d-badge[data-status]` conservan los estados `pending`, `in_prepa
 Inicia sesión con una cuenta Super Admin (incluye OTP). En `/super-admin` se muestra el listado paginado por el backend, con detalle de cada restaurante.
 
 **Nuevo restaurante** solicita nombre, dirección, teléfono y los datos del Administrador: nombre, correo y contraseña confirmada. **Ver detalle** permite editar la información general, el logo y la cuenta Stripe Connect, así como activar, suspender y eliminar con confirmación. La eliminación es una baja lógica y conserva el historial según el backend. Laravel aplica las reglas de acceso y las validaciones.
+
+## Inventario del Administrador (RFA-023)
+
+Abre **Inventario** o entra en `/admin/inventory`. **Ingredientes y existencias** permite listar, crear, editar y dar de baja ingredientes con nombre, unidad, costo unitario y existencias. Las unidades son `g`, `kg`, `oz`, `lb`, `ml`, `l`, `fl_oz`, `gal` y `pza`.
+
+Las existencias se editan como saldo absoluto. La edición consulta el registro actual y envía únicamente los campos modificados mediante `PUT`, para no reemplazar existencias al cambiar solo el nombre o costo. Laravel bloquea cambios de unidad cuando hay pérdidas, consumos o recetas y bajas de ingredientes usados en recetas activas.
+
+**Pérdidas** permite registrar ingrediente, cantidad y motivo, además de consultar el historial y su detalle. El backend descuenta las existencias en una transacción y rechaza cantidades superiores al stock. Las pérdidas son de consulta y conservan su historial tras la baja del ingrediente; cuando la API ya no ofrece el nombre del ingrediente, se muestra su identificador. El empleado y la fecha son datos asignados por el servidor.
+
+Los costos conservan hasta cuatro decimales y las existencias y cantidades hasta tres. Los selectores incluyen todas las páginas de ingredientes disponibles. Los formularios conservan sus datos ante errores y no reintentan automáticamente registros de pérdidas.
 
 ## Catálogo del Administrador
 

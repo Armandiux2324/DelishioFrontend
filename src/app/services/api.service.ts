@@ -1,3 +1,4 @@
+import { InventoryItem, InventoryLoss, InventoryLossPayload, InventoryPage, InventoryPayload } from './inventory.models';
 import { CatalogKind, CatalogPage, CatalogPayloads, CatalogRecords } from './catalog.models';
 import { RestaurantSettings, RestaurantSettingsValues } from './restaurant-settings.models';
 import { inject, Injectable } from '@angular/core';
@@ -80,6 +81,15 @@ export class ApiService {
   deleteCatalog(kind: CatalogKind, id: number) {
     return this.client.delete<void>('/admin/' + kind + '/' + id, this.auth());
   }
+
+  getInventoryItems(page = 1) { return this.client.get<InventoryPage<InventoryItem>>('/admin/inventory-items', { ...this.auth(), params: { page } }); }
+  getInventoryItem(id: number) { return this.client.get<{ data: InventoryItem }>('/admin/inventory-items/' + id, this.auth()); }
+  createInventoryItem(payload: InventoryPayload) { return this.client.post<{ data: InventoryItem }>('/admin/inventory-items', payload, this.auth()); }
+  updateInventoryItem(id: number, payload: Partial<InventoryPayload>) { return this.client.put<{ data: InventoryItem }>('/admin/inventory-items/' + id, payload, this.auth()); }
+  deleteInventoryItem(id: number) { return this.client.delete<void>('/admin/inventory-items/' + id, this.auth()); }
+  getInventoryLosses(page = 1) { return this.client.get<InventoryPage<InventoryLoss>>('/admin/inventory-losses', { ...this.auth(), params: { page } }); }
+  getInventoryLoss(id: number) { return this.client.get<{ data: InventoryLoss }>('/admin/inventory-losses/' + id, this.auth()); }
+  createInventoryLoss(payload: InventoryLossPayload) { return this.client.post<{ data: InventoryLoss }>('/admin/inventory-losses', payload, this.auth()); }
 
   getRestaurantSettings() {
     return this.client.get<{ data: RestaurantSettings }>('/admin/restaurant/configuration', this.auth());
