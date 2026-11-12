@@ -17,7 +17,7 @@ La aplicación usa NgModules y Axios. `AppRoutingModule` carga cada área bajo d
 - `guards/` verifica sesión y rol. `shared/` reúne componentes reutilizables.
 - `environments/` define la URL de la API. La compilación de producción reemplaza `environment.ts` por `environment.prod.ts`. Ambos usan `/api/v1` con la configuración actual.
 
-El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone de elementos de menú, catálogo, inventario y configuración del restaurante. Chef y Cliente conservan el layout base para incorporar sus páginas.
+El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone de empleados, elementos de menú, catálogo, inventario y configuración del restaurante. Chef y Cliente conservan el layout base para incorporar sus páginas.
 
 ## Base visual compartida
 
@@ -35,6 +35,16 @@ Las etiquetas `.d-badge[data-status]` conservan los estados `pending`, `in_prepa
 Inicia sesión con una cuenta Super Admin (incluye OTP). En `/super-admin` se muestra el listado paginado por el backend, con detalle de cada restaurante.
 
 **Nuevo restaurante** solicita nombre, dirección, teléfono y los datos del Administrador: nombre, correo y contraseña confirmada. **Ver detalle** permite editar la información general, el logo y la cuenta Stripe Connect, así como activar, suspender y eliminar con confirmación. La eliminación es una baja lógica y conserva el historial según el backend. Laravel aplica las reglas de acceso y las validaciones.
+
+## Empleados del Administrador (RFA-024)
+
+Abre **Empleados** o entra en `/admin/employees`. Permite consultar, crear, editar y dar de baja cuentas del restaurante. Integra nombre, correo, usuario opcional, idioma, teléfono, rol (`admin`, `waiter`, `chef`), tarifa por hora y estado activo. Solo Chef tiene estación (`kitchen` o `bar`).
+
+El alta requiere contraseña confirmada. Al editar, dejar contraseña y PIN vacíos conserva las credenciales. El PIN admite de 4 a 6 dígitos y promover a Administrador requiere asignar uno nuevo. Laravel rechaza PIN duplicados de Administradores del mismo restaurante.
+
+Si se omite el PIN al crear, el backend lo genera y la interfaz lo muestra una sola vez, hasta cerrar el aviso. La interfaz no lo guarda en almacenamiento del navegador. Los campos secretos se limpian al enviar o cerrar el formulario y nunca se rellenan con datos guardados.
+
+La edición usa `PUT` con solo los cambios. Cambiar las propias credenciales o permisos cierra la sesión, de acuerdo con la revocación del backend. Laravel impide eliminar, desactivar o degradar al último Administrador activo; sus errores se muestran sin descartar los datos no secretos del formulario.
 
 ## Elementos de menú del Administrador (RFA-013)
 
