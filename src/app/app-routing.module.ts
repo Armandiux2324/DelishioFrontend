@@ -5,8 +5,13 @@ import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
   {
-    path: 'login',
+    path: '',
     loadChildren: () => import('./pages/auth/auth.module').then(module => module.AuthModule),
+  },
+  {
+    path: 'profile', canActivate: [authGuard],
+    data: { roles: ['super_admin', 'admin', 'waiter', 'chef', 'customer'] },
+    loadChildren: () => import('./pages/profile/profile.module').then(module => module.ProfileModule),
   },
   {
     path: 'super-admin', canActivate: [authGuard], canActivateChild: [roleGuard],

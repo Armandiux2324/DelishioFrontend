@@ -1,13 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import axios, { AxiosRequestConfig } from 'axios';
 import { environment } from '../../environments/environment';
-import { LoginResult, OrdersPage, Quote, Session, User } from './api.models';
+import { ApiMessage, LoginResult, OrdersPage, ProfilePayload, Quote, RegisterPayload, ResetPasswordPayload, Session, User } from './api.models';
 import { SessionService } from './session.service';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly session = inject(SessionService);
-  private readonly client = axios.create({ baseURL: environment.apiUrl });
+  private readonly client = axios.create({ baseURL: environment.apiUrl, headers: { Accept: 'application/json' } });
 
   constructor() {
     this.client.interceptors.response.use(
@@ -22,12 +22,40 @@ export class ApiService {
     );
   }
 
-  login(login: string, password: string) {
-    return this.client.post<LoginResult>('/auth/login', { login: login.trim(), password });
+  login(login: string, password: string, locale: 'en' | 'es' = 'es') {
+    return this.client.post<LoginResult>('/auth/login', { login: login.trim(), password }, { headers: { 'Accept-Language': locale } });
   }
 
-  verifyTwoFactor(ticket: string, code: string) {
-    return this.client.post<Session>('/auth/login/verify-2fa', { ticket, code });
+  verifyTwoFactor(ticket: string, code: string, locale: 'en' | 'es' = 'es') {
+    return this.client.post<Session>('/auth/login/verify-2fa', { ticket, code }, { headers: { 'Accept-Language': locale } });
+  }
+
+  register(payload: RegisterPayload) {
+    return this.client.post<ApiMessage>('/auth/register', payload, { headers: { 'Accept-Language': payload.locale } });
+  }
+
+  verifyEmail(email: string, code: string, locale: 'en' | 'es') {
+    return this.client.post<ApiMessage>('/auth/verify-email', { email, code }, { headers: { 'Accept-Language': locale } });
+  }
+
+  resendVerification(email: string, locale: 'en' | 'es') {
+    return this.client.post<ApiMessage>('/auth/verify-email/resend', { email }, { headers: { 'Accept-Language': locale } });
+  }
+
+  forgotPassword(email: string, locale: 'en' | 'es') {
+    return this.client.post<ApiMessage>('/auth/password/forgot', { email }, { headers: { 'Accept-Language': locale } });
+  }
+
+  resetPassword(payload: ResetPasswordPayload, locale: 'en' | 'es') {
+    return this.client.post<ApiMessage>('/auth/password/reset', payload, { headers: { 'Accept-Language': locale } });
+  }
+
+  updateProfile(payload: ProfilePayload) {
+    return this.client.patch<User>('/user', payload, this.auth());
+  }
+
+  setTwoFactor(enabled: boolean, password: string) {
+    return this.client.post<ApiMessage>('/auth/2fa/' + (enabled ? 'enable' : 'disable'), { password }, this.auth());
   }
 
   getUser() {

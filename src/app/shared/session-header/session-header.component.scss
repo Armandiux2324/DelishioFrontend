@@ -11,3 +11,6 @@ strong { display: block; font-size: 1.125rem; letter-spacing: -.025em; }
   .compact .d-button { padding-inline: .5rem; font-size: .8125rem; }
 }
 @media print { :host { display: none; } }
+
+.profile-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; color: var(--d-brand); text-decoration: none; }
+.profile-link:focus-visible { outline: 3px solid var(--d-brand); outline-offset: 3px; border-radius: .5rem; }

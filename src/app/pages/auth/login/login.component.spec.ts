@@ -65,7 +65,7 @@ describe('LoginComponent', () => {
 
   it('starts the shared session and redirects the waiter', fakeAsync(() => {
     login();
-    expect(api.login).toHaveBeenCalledOnceWith('mesero', 'secret');
+    expect(api.login).toHaveBeenCalledOnceWith('mesero', 'secret', 'es');
     expect(session.user).toEqual(waiter.user);
     expect(navigate).toHaveBeenCalledOnceWith('/mesero');
     expect(view.querySelector<HTMLInputElement>('input[name="password"]')?.value).toBe('');
@@ -80,14 +80,14 @@ describe('LoginComponent', () => {
     input('code', '012345');
     fixture.detectChanges();
     submit();
-    expect(api.verifyTwoFactor).toHaveBeenCalledOnceWith('challenge', '012345');
+    expect(api.verifyTwoFactor).toHaveBeenCalledOnceWith('challenge', '012345', 'es');
     expect(navigate).toHaveBeenCalledWith('/mesero');
   }));
 
   it('shows invalid credentials without storing a session', fakeAsync(() => {
     api.login.and.rejectWith(new Error('Invalid credentials'));
     login();
-    expect(view.querySelector('[role="alert"]')?.textContent).toContain('No se pudo iniciar sesión');
+    expect(view.querySelector('[role="alert"]')?.textContent).toContain('No se pudo completar');
     expect(session.token).toBeNull();
     expect(navigate).not.toHaveBeenCalled();
   }));

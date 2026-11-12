@@ -1,0 +1,58 @@
+@let text = t();
+<app-session-header [area]="text.profile" />
+<main [attr.lang]="language()">
+  <app-page-heading [title]="text.profile" [subtitle]="text.profileHint">
+    <a dButton variant="secondary" [routerLink]="session.home">{{ text.back }}</a>
+  </app-page-heading>
+  <app-panel><div class="content">
+    <app-form-feedback id="profile-feedback" [state]="state" [english]="language() === 'en'" />
+    <form [formGroup]="form" (ngSubmit)="save()" [attr.aria-busy]="state.busy()">
+      <label class="d-field" for="profile-name">{{ text.name }}
+        <input class="d-input" id="profile-name" name="name" formControlName="name" required maxlength="255" autocomplete="name" aria-describedby="profile-feedback" [attr.aria-invalid]="(form.controls.name.invalid && form.controls.name.touched) || !!state.error()?.fields?.['name']">
+      </label>
+      <label class="d-field" for="profile-username">{{ text.username }} · {{ text.optional }}
+        <input class="d-input" id="profile-username" name="username" formControlName="username" maxlength="50" autocomplete="username" autocapitalize="none" spellcheck="false" aria-describedby="username-hint profile-feedback" [attr.aria-invalid]="(form.controls.username.invalid && form.controls.username.touched) || !!state.error()?.fields?.['username']">
+      </label>
+      <small id="username-hint" class="d-field-hint">{{ text.usernameHint }}</small>
+      <label class="d-field" for="profile-email">{{ text.email }}
+        <input class="d-input" id="profile-email" type="email" [value]="session.user?.email ?? ''" readonly aria-describedby="email-hint">
+      </label>
+      <small id="email-hint" class="d-field-hint">{{ text.readOnlyEmail }}</small>
+      @if (!superAdmin) {
+        <label class="d-field" for="profile-phone">{{ text.phone }} · {{ text.optional }}
+          <input class="d-input" id="profile-phone" name="phone" type="tel" formControlName="phone" maxlength="20" autocomplete="tel" aria-describedby="profile-feedback" [attr.aria-invalid]="(form.controls.phone.invalid && form.controls.phone.touched) || !!state.error()?.fields?.['phone']">
+        </label>
+      }
+      <label class="d-field" for="profile-locale">{{ text.language }}
+        <select class="d-select" id="profile-locale" name="locale" formControlName="locale">
+          <option value="es">Español</option><option value="en">English</option>
+        </select>
+      </label>
+      @if (form.invalid && form.touched) { <p class="d-field-error" role="alert">{{ text.invalidForm }}</p> }
+      <button dButton type="submit" [disabled]="state.busy() || securityState.busy()">{{ text.save }}</button>
+    </form>
+  </div></app-panel>
+
+  <app-panel><section class="content" aria-labelledby="security-title">
+    <h2 id="security-title">{{ text.security }}</h2>
+    <p class="hint">{{ text.twoFactor }} · {{ twoFactorEnabled() ? text.enabled : text.disabled }}</p>
+    <app-form-feedback id="security-feedback" [state]="securityState" [english]="language() === 'en'" />
+    @if (superAdmin) {
+      <p class="hint">{{ text.forcedTwoFactor }}</p>
+    } @else {
+      <form [formGroup]="security" (ngSubmit)="changeTwoFactor()" [attr.aria-busy]="securityState.busy()">
+        <label class="toggle" for="two-factor">
+          <input id="two-factor" name="enabled" type="checkbox" formControlName="enabled">
+          <span>{{ text.twoFactor }}</span>
+        </label>
+        <p class="hint">{{ text.twoFactorHint }}</p>
+        <label class="d-field" for="security-password">{{ text.currentPassword }}
+          <input class="d-input" id="security-password" name="current_password" type="password" formControlName="password" required autocomplete="current-password" aria-describedby="security-feedback" [attr.aria-invalid]="security.controls.password.invalid && security.controls.password.touched">
+        </label>
+        @if (security.invalid && security.touched) { <p class="d-field-error" role="alert">{{ text.invalidForm }}</p> }
+        <button dButton type="submit" [disabled]="state.busy() || securityState.busy() || security.controls.enabled.value === twoFactorEnabled()">{{ text.confirmSecurity }}</button>
+      </form>
+    }
+    <a routerLink="/forgot-password" [state]="{ email: session.user?.email, locale: language() }">{{ text.reset }}</a>
+  </section></app-panel>
+</main>
