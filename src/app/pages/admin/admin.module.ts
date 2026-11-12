@@ -1,3 +1,5 @@
+import { ReactiveFormsModule } from '@angular/forms';
+import { SettingsComponent } from './settings/settings.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -5,12 +7,13 @@ import { AdminLayoutComponent } from '../../layouts/admin-layout/admin-layout.co
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-  declarations: [AdminLayoutComponent],
+  declarations: [AdminLayoutComponent, SettingsComponent],
   imports: [
-    CommonModule, SharedModule,
+    CommonModule, SharedModule, ReactiveFormsModule,
     RouterModule.forChild([{
       path: '',
       component: AdminLayoutComponent,
+      children: [{ path: 'settings', component: SettingsComponent }],
     }]),
   ],
 })

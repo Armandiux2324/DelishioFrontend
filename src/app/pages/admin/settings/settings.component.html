@@ -1,0 +1,54 @@
+<app-page-heading [title]="text.title" [subtitle]="text.subtitle" />
+<app-form-feedback id="settings-load" [state]="loadState" [english]="locale === 'en'" />
+@if (loadState.error()) { <button dButton variant="secondary" type="button" [disabled]="busy()" (click)="load()">{{ text.retry }}</button> }
+@if (loaded()) {
+  <form [formGroup]="form" (ngSubmit)="save()" [attr.aria-busy]="busy()" [attr.lang]="locale">
+    <fieldset [disabled]="busy()">
+      @for (group of groups; track group.title) {
+        <app-panel><section [attr.aria-labelledby]="'settings-' + group.title">
+          <h2 [id]="'settings-' + group.title">{{ text[group.title] }}</h2>
+          <p class="hint" [id]="'hint-' + group.title">{{ text[group.hint] }}</p>
+          <div class="fields">
+            @for (field of group.fields; track field) {
+              @let control = form.controls[field];
+              @if (field === 'loyalty_enabled' || field === 'dual_pricing_enabled') {
+                <label class="toggle wide" [for]="'setting-' + field">
+                  <input [id]="'setting-' + field" [name]="field" type="checkbox" [formControlName]="field" (change)="updateToggles()" [attr.aria-describedby]="'hint-' + group.title">
+                  {{ text[field] }}
+                </label>
+              } @else {
+                <label class="d-field" [class.wide]="field === 'description'" [for]="'setting-' + field">
+                  <span>{{ text[field] }} @if (['description', 'address', 'phone', 'logo_url', 'schedule', 'discount_limit_per_shift', 'courtesy_percentage', 'courtesy_daily_limit'].includes(field)) { <small>· {{ text.optional }}</small> }</span>
+                  @if (field === 'description') {
+                    <textarea class="d-input" [id]="'setting-' + field" [name]="field" [formControlName]="field" [attr.aria-invalid]="control.invalid && control.touched || !!saveState.error()?.fields?.[field]" [attr.aria-describedby]="'error-' + field + ' hint-' + group.title" rows="3"></textarea>
+                  } @else if (field === 'currency') {
+                    <select class="d-select" [id]="'setting-' + field" [name]="field" [formControlName]="field" required [attr.aria-invalid]="control.invalid && control.touched || !!saveState.error()?.fields?.[field]" [attr.aria-describedby]="'error-' + field + ' hint-' + group.title"><option value="USD">USD</option><option value="MXN">MXN</option></select>
+                  } @else {
+                    <input class="d-input" [id]="'setting-' + field" [name]="field" [formControlName]="field"
+                      [attr.aria-required]="['name', 'timezone', 'overtime_weekly_hours', 'overtime_multiplier', 'loyalty_factor', 'loyalty_redeem_value', 'dual_pricing_percentage'].includes(field) && control.enabled"
+                      [type]="field === 'logo_url' ? 'url' : field === 'phone' ? 'tel' : 'text'"
+                      [attr.inputmode]="['loyalty_factor', 'loyalty_redeem_value', 'discount_limit_per_shift', 'courtesy_percentage', 'dual_pricing_percentage', 'overtime_weekly_hours', 'overtime_multiplier'].includes(field) ? 'decimal' : field === 'courtesy_daily_limit' ? 'numeric' : null"
+                      [attr.aria-invalid]="control.invalid && control.touched || !!saveState.error()?.fields?.[field]" [attr.aria-describedby]="'error-' + field + ' hint-' + group.title" autocomplete="off">
+                  }
+                  <span class="d-field-error" [id]="'error-' + field">
+                    @if (control.invalid && control.touched) {
+                      @if (control.getError('decimal'); as range) { {{ range.min }}–{{ range.max }} · {{ range.places }} {{ text.decimals }} }
+                      @else { {{ control.hasError('required') ? text.required : text.invalidField }} }
+                    }
+                    @for (message of saveState.error()?.fields?.[field] ?? []; track $index) { <span>{{ message }}</span> }
+                  </span>
+                </label>
+              }
+            }
+          </div>
+        </section></app-panel>
+      }
+    </fieldset>
+    <app-form-feedback id="settings-save" [state]="saveState" [english]="locale === 'en'" />
+    @if (form.invalid && form.touched) { <p class="d-field-error" role="alert">{{ text.invalid }}</p> }
+    <div class="actions">
+      <button dButton variant="secondary" type="button" [disabled]="busy() || form.pristine" (click)="reset()">{{ text.reset }}</button>
+      <button dButton type="submit" [disabled]="busy() || form.pristine">{{ text.save }}</button>
+    </div>
+  </form>
+}

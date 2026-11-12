@@ -17,7 +17,7 @@ describe('Delishio routing', () => {
 
   beforeEach(() => {
     sessionStorage.removeItem('delishio.access_token');
-    api = jasmine.createSpyObj<ApiService>('ApiService', ['getUser', 'getWaiterOrders', 'getRestaurants']);
+    api = jasmine.createSpyObj<ApiService>('ApiService', ['getUser', 'getWaiterOrders', 'getRestaurants', 'getRestaurantSettings']);
     api.getUser.and.resolveTo({ data: waiter.user } as AxiosResponse);
     api.getRestaurants.and.resolveTo({ data: { data: [], meta: { current_page: 1, last_page: 1, total: 0 } } } as never);
     api.getWaiterOrders.and.resolveTo({
@@ -88,4 +88,21 @@ describe('Delishio routing', () => {
       expect(harness.routeNativeElement?.querySelector('app-session-header')).not.toBeNull();
     });
   }
+
+  it('protects direct settings access and activates its navigation for an Administrator', async () => {
+    const harness = await RouterTestingHarness.create('/admin/settings');
+    expect(TestBed.inject(Router).url).toBe('/login');
+    session.start(waiter);
+    await harness.navigateByUrl('/admin/settings');
+    expect(TestBed.inject(Router).url).toBe('/mesero');
+    const user = { ...waiter.user, employee: { role: 'admin' as const } };
+    session.start({ ...waiter, user });
+    api.getUser.and.resolveTo({ data: user } as AxiosResponse);
+    api.getRestaurantSettings.and.rejectWith(new Error('offline'));
+    await harness.navigateByUrl('/admin/settings');
+    expect(TestBed.inject(Router).url).toBe('/admin/settings');
+    expect(harness.routeNativeElement?.querySelector('app-restaurant-settings')).not.toBeNull();
+    expect(harness.routeNativeElement?.querySelector('a[href="/admin/settings"]')?.getAttribute('aria-current')).toBe('page');
+    expect(harness.routeNativeElement?.querySelector('a[href="/admin"]')?.getAttribute('aria-current')).toBeNull();
+  });
 });
