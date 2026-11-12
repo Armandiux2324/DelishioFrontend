@@ -17,7 +17,7 @@ La aplicación usa NgModules y Axios. `AppRoutingModule` carga cada área bajo d
 - `guards/` verifica sesión y rol. `shared/` reúne componentes reutilizables.
 - `environments/` define la URL de la API. La compilación de producción reemplaza `environment.ts` por `environment.prod.ts`. Ambos usan `/api/v1` con la configuración actual.
 
-El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone de consulta de clientes, promociones, empleados, elementos de menú, catálogo, inventario y configuración del restaurante. Chef y Cliente conservan el layout base para incorporar sus páginas.
+El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone de turnos, caja, movimientos de efectivo, consulta de clientes, promociones, empleados, elementos de menú, catálogo, inventario y configuración del restaurante. Chef dispone de Turnos y Cliente conserva el layout base para incorporar sus páginas.
 
 ## Base visual compartida
 
@@ -35,6 +35,18 @@ Las etiquetas `.d-badge[data-status]` conservan los estados `pending`, `in_prepa
 Inicia sesión con una cuenta Super Admin (incluye OTP). En `/super-admin` se muestra el listado paginado por el backend, con detalle de cada restaurante.
 
 **Nuevo restaurante** solicita nombre, dirección, teléfono y los datos del Administrador: nombre, correo y contraseña confirmada. **Ver detalle** permite editar la información general, el logo y la cuenta Stripe Connect, así como activar, suspender y eliminar con confirmación. La eliminación es una baja lógica y conserva el historial según el backend. Laravel aplica las reglas de acceso y las validaciones.
+
+## Turnos, caja y movimientos (RFE-001 a RFE-003, RFA-056)
+
+**Turnos** está disponible en `/admin/shifts`, `/mesero/shifts` y `/chef/shifts`. Cada empleado registra su propia entrada y salida con confirmación; el servidor asigna la identidad y los horarios. Administrador consulta todos los turnos del restaurante y Mesero/Chef consultan los propios. Nadie cierra el turno de otro empleado.
+
+**Caja** se abre en `/admin/cash/registers` o `/mesero/cash`, indicando el monto de apertura. Solo puede haber una caja abierta por restaurante. El detalle permite a Mesero cerrarla con el efectivo contado; el backend rechaza el cierre con órdenes pendientes y calcula efectivo esperado y diferencia. Los importes de cierre se muestran como pendientes hasta que la API los devuelve.
+
+**Movimientos de efectivo**, en `/admin/cash/movements`, permite al Administrador registrar `cash_in` y `cash_out` en cajas abiertas. Las salidas requieren `payroll`, `minor_purchase` u `other`. Nómina requiere empleado y fechas del periodo; esos campos se omiten para otros motivos y las entradas no envían motivo.
+
+Los movimientos son de consulta una vez registrados. La API valida efectivo disponible, límites y estado de caja. Los formularios conservan los datos ante rechazos y evitan solicitudes duplicadas mientras se procesa una operación. Los montos se envían como texto con hasta dos decimales; las fechas de nómina se conservan como `YYYY-MM-DD`.
+
+Los enlaces de Mesero conservan la precuenta existente y añaden Turnos/Caja. Chef dispone de Turnos. Los formularios reutilizan los mismos componentes visuales y respetan los permisos del backend.
 
 ## Clientes y promociones del Administrador
 
