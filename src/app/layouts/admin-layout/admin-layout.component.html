@@ -1,2 +1,13 @@
-<app-session-header [area]="session.user?.locale === 'en' ? 'Administrator' : 'Administrador'" />
-<router-outlet />
+@let english = session.user?.locale === 'en';
+<app-shell [area]="english ? 'Administrator' : 'Administrador'" [navigation]="navigation">
+  <router-outlet #page="outlet" />
+  @if (!page.isActivated) {
+    <app-page-heading title="Dashboard"
+      [subtitle]="session.user?.employee?.restaurant?.name ?? 'Delishio'" />
+    <app-panel>
+      <app-feedback kind="pending"
+        [title]="english ? 'Your administration workspace' : 'Tu espacio de administración'"
+        [message]="english ? 'The dashboard will bring together your restaurant’s sales and operations. Its pages will be added in the next modules.' : 'El dashboard reunirá las ventas y la operación de tu restaurante. Sus páginas se incorporarán en los próximos módulos.'" />
+    </app-panel>
+  }
+</app-shell>

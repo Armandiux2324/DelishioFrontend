@@ -1,12 +1,13 @@
-:host { display: block; }
+:host { display: block; color: var(--d-ink); font-family: var(--d-font); }
 header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1rem; }
-strong, span { display: block; }
-button { font: inherit; color: #007aff; background: transparent; border: 1px solid currentColor; border-radius: .75rem; padding: .5rem .8rem; cursor: pointer; }
-button:disabled { opacity: .5; cursor: default; }
-p { margin: 0 1rem; color: #b91c1c; }
-@media (prefers-color-scheme: dark) {
-  :host { color: #f5f5f7; }
-  button { color: #78b4ff; }
-  p { color: #ff9da1; }
+header.compact { padding: .5rem 0; }
+strong { display: block; font-size: 1.125rem; letter-spacing: -.025em; }
+.area, .name { color: var(--d-muted); font-size: .8125rem; overflow-wrap: anywhere; }
+.account { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 1rem; min-width: 0; }
+.compact .area { color: var(--d-ink); font-weight: 500; }
+@media (max-width: 40rem) {
+  .compact .name { display: none; }
+  .compact .account { margin-inline-start: auto; }
+  .compact .d-button { padding-inline: .5rem; font-size: .8125rem; }
 }
 @media print { :host { display: none; } }

@@ -1,11 +1,17 @@
 @let english = session.user?.locale === 'en';
-<header>
-  <div><strong>Delishio</strong><span>{{ area }}</span></div>
-  <span>{{ (session.session$ | async)?.user?.name }}</span>
-  <button type="button" [disabled]="busy()" (click)="logout()">
-    {{ english ? 'Sign out' : 'Cerrar sesión' }}
-  </button>
+<header [class.compact]="compact">
+  <div class="brand">
+    @if (!compact) { <strong>Delishio</strong> }
+    <span class="area">{{ area }}</span>
+  </div>
+  <div class="account">
+    <span class="name">{{ (session.session$ | async)?.user?.name }}</span>
+    <button dButton variant="ghost" type="button" [disabled]="busy()" (click)="logout()" [attr.aria-busy]="busy()">
+      <svg lucideIcon="log-out" [size]="18" aria-hidden="true"></svg>
+      <span>{{ english ? 'Sign out' : 'Cerrar sesión' }}</span>
+    </button>
+  </div>
 </header>
 @if (failed()) {
-  <p role="alert">{{ english ? 'Unable to sign out. Try again.' : 'No se pudo cerrar la sesión. Inténtalo de nuevo.' }}</p>
+  <app-feedback kind="error" [message]="english ? 'Unable to sign out. Try again.' : 'No se pudo cerrar la sesión. Inténtalo de nuevo.'" />
 }

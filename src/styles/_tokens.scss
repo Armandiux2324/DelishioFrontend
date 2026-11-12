@@ -1,0 +1,50 @@
+:root {
+  --d-font: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  --d-surface: #f6f7f9;
+  --d-panel: #fff;
+  --d-ink: #0e1116;
+  --d-muted: #5b6470;
+  --d-line: #e4e7ec;
+  --d-brand: #2740f0;
+  --d-brand-hover: #1a2ccc;
+  --d-brand-soft: #ebeeff;
+  --d-success: #0f7845;
+  --d-success-soft: #e6f6ec;
+  --d-warning: #935400;
+  --d-warning-soft: #fff1d1;
+  --d-danger: #c8261f;
+  --d-danger-soft: #fde9e8;
+  --d-neutral-soft: #eceef2;
+  --d-radius-sm: .5rem;
+  --d-radius: .875rem;
+  --d-radius-lg: 1.25rem;
+  --d-shadow: 0 4px 24px #0e111608;
+  --d-space-1: .25rem;
+  --d-space-2: .5rem;
+  --d-space-3: .75rem;
+  --d-space-4: 1rem;
+  --d-space-6: 1.5rem;
+  --d-space-8: 2rem;
+  --d-nav-width: 15.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --d-surface: #111318;
+    --d-panel: #1a1d24;
+    --d-ink: #f5f6fa;
+    --d-muted: #adb5c4;
+    --d-line: #333946;
+    --d-brand: #a6b4ff;
+    --d-brand-hover: #c2ccff;
+    --d-brand-soft: #283258;
+    --d-success: #7be0a7;
+    --d-success-soft: #173c2a;
+    --d-warning: #f6ca78;
+    --d-warning-soft: #49371a;
+    --d-danger: #ffaaa5;
+    --d-danger-soft: #492321;
+    --d-neutral-soft: #303540;
+    --d-shadow: 0 4px 24px #0000001a;
+  }
+}

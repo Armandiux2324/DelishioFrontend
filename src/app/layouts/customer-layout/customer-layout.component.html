@@ -1,2 +1,13 @@
-<app-session-header [area]="session.user?.locale === 'en' ? 'Customer' : 'Cliente'" />
-<router-outlet />
+@let english = session.user?.locale === 'en';
+<app-shell mode="customer" [area]="english ? 'Customer' : 'Cliente'" [navigation]="navigation">
+  <router-outlet #page="outlet" />
+  @if (!page.isActivated) {
+    <app-page-heading [title]="english ? 'Restaurants' : 'Restaurantes'"
+      [subtitle]="english ? 'Your next visit starts here' : 'Tu próxima visita empieza aquí'" />
+    <app-panel>
+      <app-feedback kind="pending"
+        [title]="english ? 'We’re preparing your next experience' : 'Estamos preparando tu próxima experiencia'"
+        [message]="english ? 'You’ll be able to explore restaurants, browse their menus and place takeout orders here. These pages will be added in the Customer module.' : 'Aquí podrás explorar restaurantes, consultar sus menús y pedir para llevar. Estas páginas se incorporarán en el módulo de Cliente.'" />
+    </app-panel>
+  }
+</app-shell>

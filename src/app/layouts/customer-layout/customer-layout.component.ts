@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { customerNavigation } from '../layout-navigation';
 import { SessionService } from '../../services/session.service';
 
 @Component({
@@ -7,5 +8,6 @@ import { SessionService } from '../../services/session.service';
   templateUrl: './customer-layout.component.html',
 })
 export class CustomerLayoutComponent {
+  protected readonly navigation = customerNavigation;
   protected readonly session = inject(SessionService);
 }

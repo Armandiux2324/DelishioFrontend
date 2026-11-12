@@ -1,0 +1,13 @@
+:host { display: block; min-width: 0; }
+section > div { min-width: 0; max-width: 100%; }
+h2, p { overflow-wrap: anywhere; }
+section { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--d-space-4); padding: clamp(2rem, 7vw, 5rem) var(--d-space-6); text-align: center; }
+.symbol { display: grid; place-items: center; width: 3.5rem; height: 3.5rem; border: 1px solid var(--d-line); border-radius: 1rem; color: var(--d-brand); background: var(--d-brand-soft); }
+h2 { margin: 0; font-size: 1.125rem; font-weight: 600; letter-spacing: -.02em; }
+p { margin: .625rem auto 0; max-width: 28rem; color: var(--d-muted); font-size: .9375rem; line-height: 1.65; }
+:host([data-kind=error]) section { flex-direction: row; justify-content: start; padding: var(--d-space-4); text-align: start; border: 1px solid var(--d-danger); border-radius: var(--d-radius-sm); background: var(--d-danger-soft); }
+:host([data-kind=error]) .symbol { flex-shrink: 0; width: 2rem; height: 2rem; color: var(--d-danger); border: 0; background: transparent; }
+:host([data-kind=error]) p { margin: 0; max-width: none; color: var(--d-danger); }
+.spinner { animation: d-spin 1s linear infinite; }
+@keyframes d-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }

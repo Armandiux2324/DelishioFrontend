@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { adminNavigation } from '../layout-navigation';
 import { SessionService } from '../../services/session.service';
 
 @Component({
@@ -7,5 +8,6 @@ import { SessionService } from '../../services/session.service';
   templateUrl: './admin-layout.component.html',
 })
 export class AdminLayoutComponent {
+  protected readonly navigation = adminNavigation;
   protected readonly session = inject(SessionService);
 }

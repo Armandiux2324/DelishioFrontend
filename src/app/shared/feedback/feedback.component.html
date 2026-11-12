@@ -1,0 +1,15 @@
+<section [attr.role]="kind === 'error' ? 'alert' : 'status'" [attr.aria-busy]="kind === 'loading'">
+  <span class="symbol" aria-hidden="true">
+    @switch (kind) {
+      @case ('loading') { <svg lucideIcon="loader-circle" class="spinner" [size]="24" ></svg> }
+      @case ('error') { <svg lucideIcon="circle-alert" [size]="24" ></svg> }
+      @case ('pending') { <svg lucideIcon="clock-3" [size]="24" ></svg> }
+      @default { <svg lucideIcon="search" [size]="24" ></svg> }
+    }
+  </span>
+  <div>
+    @if (title) { <h2>{{ title }}</h2> }
+    <p>{{ message }}</p>
+    <ng-content />
+  </div>
+</section>

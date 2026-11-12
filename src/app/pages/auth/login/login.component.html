@@ -1,8 +1,8 @@
 <main class="layout" [attr.lang]="language()" [attr.aria-busy]="busy()">
   @let text = t();
   <header class="top"><strong>Delishio</strong>
-    <label>Idioma / Language
-      <select [ngModel]="language()" (ngModelChange)="language.set($event)">
+    <label class="d-field">Idioma / Language
+      <select class="d-select" [ngModel]="language()" (ngModelChange)="language.set($event)">
         <option value="es">Español</option><option value="en">English</option>
       </select>
     </label>
@@ -13,15 +13,15 @@
     <h1 id="access-title">{{ text.title }}</h1>
     @if (ticket()) {
       <form #verification="ngForm" (ngSubmit)="verify(code.value)">
-        <label>{{ text.code }}<input #code name="code" ngModel required pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></label>
-        <button type="submit" [disabled]="busy() || verification.invalid">{{ text.verify }}</button>
-        <button type="button" class="secondary" [disabled]="busy()" (click)="cancelVerification()">{{ text.back }}</button>
+        <label class="d-field">{{ text.code }}<input class="d-input" #code name="code" ngModel required pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></label>
+        <button dButton type="submit" [disabled]="busy() || verification.invalid">{{ text.verify }}</button>
+        <button dButton type="button" variant="secondary" [disabled]="busy()" (click)="cancelVerification()">{{ text.back }}</button>
       </form>
     } @else {
       <form #credentials="ngForm" (ngSubmit)="signIn(login.value, password)">
-        <label>{{ text.login }}<input #login name="login" ngModel required autocomplete="username" maxlength="255"></label>
-        <label>{{ text.password }}<input type="password" name="password" [(ngModel)]="password" required autocomplete="current-password"></label>
-        <button type="submit" [disabled]="busy() || credentials.invalid">{{ text.title }}</button>
+        <label class="d-field">{{ text.login }}<input class="d-input" #login name="login" ngModel required autocomplete="username" maxlength="255"></label>
+        <label class="d-field">{{ text.password }}<input class="d-input" type="password" name="password" [(ngModel)]="password" required autocomplete="current-password"></label>
+        <button dButton type="submit" [disabled]="busy() || credentials.invalid">{{ text.title }}</button>
       </form>
     }
   </section>
