@@ -173,4 +173,25 @@ describe('ApiService using Axios', () => {
       expect(config.params).toBeUndefined();
     }
   });
+
+  it('uses the real catalog resources, PUT updates and authenticated pagination', async () => {
+    const payloads = {
+      'tax-classes': { name: 'Tax', percentage: '8.25' },
+      'super-categories': { name: 'Food', tax_class_id: 10 },
+      categories: { name: 'Lunch', super_category_id: 20, description: null },
+    };
+    for (const kind of ['tax-classes', 'super-categories', 'categories'] as const) {
+      adapter.calls.reset();
+      await api.getCatalog(kind, 2); await api.getCatalogRecord(kind, 30);
+      await api.createCatalog(kind, payloads[kind]); await api.updateCatalog(kind, 30, payloads[kind]);
+      await api.deleteCatalog(kind, 30);
+      const calls = adapter.calls.allArgs().map(([config]) => config);
+      expect(calls.map(config => config.url)).toEqual(['', '/30', '', '/30', '/30'].map(path => '/admin/' + kind + path));
+      expect(calls.map(config => config.method)).toEqual(['get', 'get', 'post', 'put', 'delete']);
+      expect(calls[0].params).toEqual({ page: 2 });
+      expect(JSON.parse(calls[2].data)).toEqual(payloads[kind]);
+      expect(JSON.parse(calls[3].data)).toEqual(payloads[kind]);
+      for (const config of calls) expect(config.headers.get('Authorization')).toBe('Bearer token');
+    }
+  });
 });

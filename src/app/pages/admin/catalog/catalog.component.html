@@ -1,0 +1,68 @@
+<app-page-heading [title]="text[kind]" [subtitle]="text.subtitle">
+  <button dButton variant="secondary" type="button" [disabled]="busy()" (click)="loadPage(pagination().current_page)">{{ text.refresh }}</button>
+  <button #addButton dButton type="button" [disabled]="busy()" (click)="openEditor()">{{ text.create }}</button>
+</app-page-heading>
+<nav class="tabs" [attr.aria-label]="text.title">
+  @for (section of kinds; track section) { <a dButton variant="secondary" [routerLink]="['/admin/catalog', section]" routerLinkActive="active" ariaCurrentWhenActive="page">{{ text[section] }}</a> }
+</nav>
+@if (notice()) { <p class="notice" role="status">{{ notice() }}</p> }
+<app-form-feedback [state]="listState" [english]="locale === 'en'" />
+@if (!listState.busy() && !listState.error()) {
+  <app-panel>
+    @if (records().length) {
+      <div class="d-table-wrap table-scroll" tabindex="0" [attr.aria-label]="text[kind]">
+        <table class="d-table"><caption class="d-visually-hidden">{{ text[kind] }}</caption>
+          <thead><tr><th scope="col">{{ text.name }}</th><th scope="col">{{ kind === 'tax-classes' ? text.percentage : kind === 'super-categories' ? text.taxClass : text.superCategory }}</th><th scope="col"><span class="d-visually-hidden">{{ text.edit }} / {{ text.delete }}</span></th></tr></thead>
+          <tbody>@for (record of records(); track record.id) {
+            <tr><td>{{ record.name }}</td><td>{{ kind === 'tax-classes' ? percentage(record) + ' %' : parentName(record) }}</td>
+              <td><div class="row-actions">
+                <button dButton variant="ghost" type="button" [disabled]="busy()" [attr.aria-label]="text.edit + ' — ' + record.name" (click)="openEditor(record)">{{ text.edit }}</button>
+                <button dButton variant="ghost" type="button" [disabled]="busy()" [attr.aria-label]="text.delete + ' — ' + record.name" (click)="prepareDelete(record)">{{ text.delete }}</button>
+              </div></td></tr>
+          }</tbody>
+        </table>
+      </div>
+      <footer class="pagination"><span>{{ pagination().total }} {{ text.total }} · {{ text.page }} {{ pagination().current_page }} {{ text.of }} {{ pagination().last_page }}</span>
+        <button dButton variant="secondary" type="button" [disabled]="busy() || pagination().current_page <= 1" (click)="loadPage(pagination().current_page - 1)">{{ text.previous }}</button>
+        <button dButton variant="secondary" type="button" [disabled]="busy() || pagination().current_page >= pagination().last_page" (click)="loadPage(pagination().current_page + 1)">{{ text.next }}</button>
+      </footer>
+    } @else { <app-feedback [title]="text.empty" [message]="text.emptyHint" /> }
+  </app-panel>
+}
+<app-dialog #editor [title]="(selected() ? text.editRecord : text.newRecord) + ' · ' + text[kind]" [closeLabel]="text.close" [busy]="editorState.busy()">
+  <app-form-feedback id="catalog-editor-feedback" [state]="editorState" [english]="locale === 'en'" />
+  @if (ready()) {
+    <form [formGroup]="form" (ngSubmit)="save()" [attr.aria-busy]="editorState.busy()">
+      <fieldset [disabled]="editorState.busy()">
+        <label class="d-field" for="catalog-name">{{ text.name }}<input class="d-input" id="catalog-name" name="name" formControlName="name" required maxlength="255" [attr.aria-invalid]="form.controls.name.invalid && form.controls.name.touched || !!editorState.error()?.fields?.['name']" aria-describedby="name-error catalog-editor-feedback"></label>
+        <span id="name-error" class="d-field-error">@if (form.controls.name.invalid && form.controls.name.touched) { {{ text.nameInvalid }} }</span>
+        @if (kind === 'tax-classes') {
+          <label class="d-field" for="catalog-percentage">{{ text.percentage }}<input class="d-input" id="catalog-percentage" name="percentage" formControlName="percentage" required inputmode="decimal" [attr.aria-invalid]="form.controls.percentage.invalid && form.controls.percentage.touched || !!editorState.error()?.fields?.['percentage']" aria-describedby="percentage-hint catalog-editor-feedback"></label>
+          <small class="hint" id="percentage-hint">{{ text.percentageHint }}</small>
+          @if (form.controls.percentage.invalid && form.controls.percentage.touched) { <p class="d-field-error" role="alert">{{ text.percentageHint }}</p> }
+        } @else {
+          <label class="d-field" for="catalog-parent">{{ kind === 'super-categories' ? text.taxClass : text.superCategory }}
+            <select class="d-select" id="catalog-parent" name="parent" formControlName="parent" required [attr.aria-invalid]="form.controls.parent.invalid && form.controls.parent.touched || !!editorState.error()?.fields?.[kind === 'super-categories' ? 'tax_class_id' : 'super_category_id']" aria-describedby="parent-hint catalog-editor-feedback">
+              <option value="">{{ text.select }}</option>
+              @for (parent of parents(); track parent.id) { <option [value]="parent.id">{{ parent.name }} · #{{ parent.id }}</option> }
+            </select>
+          </label>
+          <span id="parent-hint" class="hint">@if (!parents().length) { {{ text.noParents }} }</span>
+          @if (form.controls.parent.invalid && form.controls.parent.touched) { <p class="d-field-error" role="alert">{{ text.parentInvalid }}</p> }
+        }
+        @if (kind === 'categories') {
+          <label class="d-field" for="catalog-description">{{ text.description }} · {{ text.optional }}<textarea class="d-input" id="catalog-description" name="description" formControlName="description" rows="3" [attr.aria-invalid]="form.controls.description.invalid && form.controls.description.touched || !!editorState.error()?.fields?.['description']" aria-describedby="description-hint catalog-editor-feedback"></textarea></label>
+          <small class="hint" id="description-hint">{{ text.descriptionHint }}</small>
+          @if (form.controls.description.invalid && form.controls.description.touched) { <p class="d-field-error" role="alert">{{ text.descriptionInvalid }}</p> }
+        }
+      </fieldset>
+      @if (form.invalid && form.touched) { <p class="d-field-error" role="alert">{{ text.invalid }}</p> }
+      <div class="actions"><button dButton variant="secondary" type="button" [disabled]="editorState.busy()" (click)="editor.close()">{{ text.cancel }}</button><button dButton type="submit" [disabled]="editorState.busy()">{{ text.save }}</button></div>
+    </form>
+  }
+</app-dialog>
+<app-dialog #confirmation [title]="text.deleteQuestion" [closeLabel]="text.close" [busy]="deleteState.busy()">
+  <p class="record-name">{{ selected()?.name }}</p><p class="hint">{{ text.deleteHint }}</p>
+  <app-form-feedback [state]="deleteState" [english]="locale === 'en'" />
+  <div class="actions"><button dButton variant="secondary" type="button" [disabled]="deleteState.busy()" (click)="confirmation.close()">{{ text.cancel }}</button><button dButton variant="danger" type="button" [disabled]="deleteState.busy()" (click)="remove()">{{ text.confirm }}</button></div>
+</app-dialog>

@@ -5,7 +5,7 @@
       <li>
         @if (item.route) {
           <a [routerLink]="item.route" routerLinkActive="active" ariaCurrentWhenActive="page"
-            [routerLinkActiveOptions]="{ paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }" [attr.title]="text" (click)="followed.emit()">
+            [routerLinkActiveOptions]="{ paths: item.exact === false ? 'subset' : 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }" [attr.title]="text" (click)="followed.emit()">
             <svg [lucideIcon]="item.icon" [size]="20" aria-hidden="true" ></svg>
             <span class="label">{{ text }}</span>
           </a>

@@ -17,7 +17,7 @@ La aplicación usa NgModules y Axios. `AppRoutingModule` carga cada área bajo d
 - `guards/` verifica sesión y rol. `shared/` reúne componentes reutilizables.
 - `environments/` define la URL de la API. La compilación de producción reemplaza `environment.ts` por `environment.prod.ts`. Ambos usan `/api/v1` con la configuración actual.
 
-El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone de la configuración del restaurante. Chef y Cliente conservan el layout base para incorporar sus páginas.
+El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone del catálogo y de la configuración del restaurante. Chef y Cliente conservan el layout base para incorporar sus páginas.
 
 ## Base visual compartida
 
@@ -35,6 +35,14 @@ Las etiquetas `.d-badge[data-status]` conservan los estados `pending`, `in_prepa
 Inicia sesión con una cuenta Super Admin (incluye OTP). En `/super-admin` se muestra el listado paginado por el backend, con detalle de cada restaurante.
 
 **Nuevo restaurante** solicita nombre, dirección, teléfono y los datos del Administrador: nombre, correo y contraseña confirmada. **Ver detalle** permite editar la información general, el logo y la cuenta Stripe Connect, así como activar, suspender y eliminar con confirmación. La eliminación es una baja lógica y conserva el historial según el backend. Laravel aplica las reglas de acceso y las validaciones.
+
+## Catálogo del Administrador
+
+Abre **Catálogo** en la navegación del Administrador o entra en `/admin/catalog`. Las secciones **Clases de impuesto**, **Súper categorías** y **Categorías** permiten listar, agregar, editar y eliminar con confirmación.
+
+Cada súper categoría requiere una clase de impuesto y cada categoría requiere una súper categoría del restaurante. Los selectores incluyen todas las páginas de la relación. El impuesto admite de 0 a 999.99 con hasta dos decimales; la descripción opcional de categoría admite hasta 65535 bytes UTF-8.
+
+La edición consulta el registro actual y utiliza `PUT`. Laravel impide eliminar registros relacionados; el mensaje se muestra en la confirmación y el registro se conserva. Las listas usan la paginación de 20 registros del backend. Los formularios envían únicamente los campos editables, sin identificadores de restaurante.
 
 ## Configuración del restaurante (RFA-055)
 

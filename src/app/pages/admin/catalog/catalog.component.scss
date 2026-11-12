@@ -1,0 +1,18 @@
+:host { display: block; }
+.tabs { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.tabs a.active { color: var(--d-brand); background: var(--d-brand-soft); border-color: transparent; }
+.notice { color: var(--d-success); background: var(--d-success-soft); padding: .75rem 1rem; border-radius: var(--d-radius-sm); }
+.table-scroll { position: relative; border: 0; border-radius: 0; }
+table { min-width: 36rem; }
+td { overflow-wrap: anywhere; max-width: 22rem; }
+.pagination, .actions { display: flex; gap: .75rem; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
+.pagination { padding: 1rem; border-top: 1px solid var(--d-line); color: var(--d-muted); font-size: .8125rem; }
+.pagination span { margin-inline-end: auto; }
+.row-actions { display: flex; gap: .5rem; }
+form { display: grid; gap: 1rem; }
+textarea { min-height: 7rem; resize: vertical; }
+.hint { color: var(--d-muted); font-size: .8125rem; }
+.record-name { font-weight: 600; overflow-wrap: anywhere; }
+@media (max-width: 40rem) { .actions .d-button { flex: 1 1 auto; } }
+
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: .75rem; }

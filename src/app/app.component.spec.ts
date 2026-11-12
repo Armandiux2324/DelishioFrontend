@@ -17,7 +17,8 @@ describe('Delishio routing', () => {
 
   beforeEach(() => {
     sessionStorage.removeItem('delishio.access_token');
-    api = jasmine.createSpyObj<ApiService>('ApiService', ['getUser', 'getWaiterOrders', 'getRestaurants', 'getRestaurantSettings']);
+    api = jasmine.createSpyObj<ApiService>('ApiService', ['getUser', 'getWaiterOrders', 'getRestaurants', 'getRestaurantSettings', 'getCatalog']);
+    api.getCatalog.and.resolveTo({ data: { data: [], meta: { current_page: 1, last_page: 1, total: 0 } } } as never);
     api.getUser.and.resolveTo({ data: waiter.user } as AxiosResponse);
     api.getRestaurants.and.resolveTo({ data: { data: [], meta: { current_page: 1, last_page: 1, total: 0 } } } as never);
     api.getWaiterOrders.and.resolveTo({
@@ -104,5 +105,22 @@ describe('Delishio routing', () => {
     expect(harness.routeNativeElement?.querySelector('app-restaurant-settings')).not.toBeNull();
     expect(harness.routeNativeElement?.querySelector('a[href="/admin/settings"]')?.getAttribute('aria-current')).toBe('page');
     expect(harness.routeNativeElement?.querySelector('a[href="/admin"]')?.getAttribute('aria-current')).toBeNull();
+  });
+
+  it('protects the catalog and keeps its parent navigation active across its three sections', async () => {
+    const harness = await RouterTestingHarness.create('/admin/catalog');
+    expect(TestBed.inject(Router).url).toBe('/login');
+    session.start(waiter); await harness.navigateByUrl('/admin/catalog/categories');
+    expect(TestBed.inject(Router).url).toBe('/mesero');
+    const user = { ...waiter.user, employee: { role: 'admin' as const } };
+    session.start({ ...waiter, user }); api.getUser.and.resolveTo({ data: user } as AxiosResponse);
+    await harness.navigateByUrl('/admin/catalog');
+    expect(TestBed.inject(Router).url).toBe('/admin/catalog/tax-classes');
+    for (const [kind, title] of [['tax-classes', 'Clases de impuesto'], ['super-categories', 'Súper categorías'], ['categories', 'Categorías']]) {
+      await harness.navigateByUrl('/admin/catalog/' + kind);
+      expect(harness.routeNativeElement?.querySelector('h1')?.textContent).toContain(title);
+      expect(harness.routeNativeElement?.querySelector('a[href="/admin/catalog"]')?.getAttribute('aria-current')).toBe('page');
+      expect(harness.routeNativeElement?.querySelector('.tabs a[aria-current="page"]')?.getAttribute('href')).toBe('/admin/catalog/' + kind);
+    }
   });
 });
