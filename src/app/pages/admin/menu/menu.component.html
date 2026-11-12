@@ -1,0 +1,52 @@
+
+<app-page-heading [title]="text.title" [subtitle]="text.subtitle"><button dButton variant="secondary" type="button" [disabled]="busy()" (click)="loadPage(pagination().current_page)">{{ text.refresh }}</button><button #addButton dButton type="button" [disabled]="busy()" (click)="openEditor()">{{ text.add }}</button></app-page-heading>
+@if (notice()) { <p class="notice" role="status">{{ notice() }}</p> }
+<app-form-feedback [state]="loadState" [english]="locale === 'en'" />
+@if (!loadState.busy() && !loadState.error()) {
+ <app-panel>
+  @if (items().length) {
+   <div class="d-table-wrap table-scroll" tabindex="0" [attr.aria-label]="text.title"><table class="d-table"><caption class="d-visually-hidden">{{ text.title }}</caption>
+    <thead><tr><th scope="col">{{ text.name }}</th><th scope="col">{{ text.category }}</th><th scope="col">{{ text.sale_price }}</th><th scope="col">{{ text.preparation_station }}</th><th scope="col">{{ text.status }}</th><th scope="col"><span class="d-visually-hidden">{{ text.edit }} / {{ text.delete }}</span></th></tr></thead>
+    <tbody>@for (item of items(); track item.id) { <tr><td>{{ item.name }}</td><td>{{ categoryName(item.category_id) }}</td><td>{{ item.sale_price }}</td><td>{{ text.stations[item.preparation_station] }}</td><td><span class="d-badge" [attr.data-status]="item.active ? 'active' : 'suspended'">{{ item.active ? text.active : text.inactive }}</span></td><td><div class="row-actions"><button dButton variant="ghost" type="button" [disabled]="busy()" [attr.aria-label]="text.edit + ' — ' + item.name" (click)="openEditor(item)">{{ text.edit }}</button><button dButton variant="ghost" type="button" [disabled]="busy()" [attr.aria-label]="text.delete + ' — ' + item.name" (click)="prepareDelete(item)">{{ text.delete }}</button></div></td></tr> }</tbody>
+   </table></div>
+   <footer class="pagination"><span>{{ pagination().total }} {{ text.total }} · {{ text.page }} {{ pagination().current_page }} {{ text.of }} {{ pagination().last_page }}</span><button dButton variant="secondary" type="button" [disabled]="busy() || pagination().current_page <= 1" (click)="loadPage(pagination().current_page - 1)">{{ text.previous }}</button><button dButton variant="secondary" type="button" [disabled]="busy() || pagination().current_page >= pagination().last_page" (click)="loadPage(pagination().current_page + 1)">{{ text.next }}</button></footer>
+  } @else { <app-feedback [title]="text.empty" [message]="text.emptyHint" /> }
+ </app-panel>
+}
+<app-dialog #editor [title]="selected() ? text.edit : text.add" [closeLabel]="text.close" [busy]="actionState.busy()">
+ <app-form-feedback id="menu-feedback" [state]="actionState" [english]="locale === 'en'" />
+ @if (ready()) {
+  <form [formGroup]="form" (ngSubmit)="save()" [attr.aria-busy]="actionState.busy()">
+   <fieldset [disabled]="actionState.busy()">
+    <label class="d-field" for="menu-name">{{ text.name }}<input class="d-input" id="menu-name" name="name" formControlName="name" required maxlength="255" aria-describedby="menu-feedback" [attr.aria-invalid]="form.controls.name.invalid && form.controls.name.touched || !!actionState.error()?.fields?.['name']"></label>
+    <label class="d-field" for="menu-category">{{ text.category }}<select class="d-select" id="menu-category" name="category_id" formControlName="category_id" required aria-describedby="category-hint menu-feedback" [attr.aria-invalid]="form.controls.category_id.invalid && form.controls.category_id.touched || !!actionState.error()?.fields?.['category_id']"><option value="">{{ text.select }}</option>@for (category of categories(); track category.id) { <option [value]="category.id">{{ category.name }} · #{{ category.id }}</option> }</select></label>
+    <small class="hint" id="category-hint">@if (!categories().length) { {{ text.noCategories }} }</small>
+    <label class="d-field" for="menu-price">{{ text.sale_price }}<input class="d-input" id="menu-price" name="sale_price" formControlName="sale_price" required inputmode="decimal" aria-describedby="price-hint menu-feedback" [attr.aria-invalid]="form.controls.sale_price.invalid && form.controls.sale_price.touched || !!actionState.error()?.fields?.['sale_price']"></label>
+    <small class="hint" id="price-hint">{{ text.priceHint }}</small>
+    <label class="d-field" for="menu-description">{{ text.description }} · {{ text.optional }}<textarea class="d-input" id="menu-description" name="description" formControlName="description" rows="3" aria-describedby="description-hint menu-feedback" [attr.aria-invalid]="form.controls.description.invalid && form.controls.description.touched || !!actionState.error()?.fields?.['description']"></textarea></label>
+    <label class="d-field" for="menu-image">{{ text.image_url }} · {{ text.optional }}<input class="d-input" id="menu-image" name="image_url" formControlName="image_url" type="url" maxlength="255" aria-describedby="description-hint menu-feedback" [attr.aria-invalid]="form.controls.image_url.invalid && form.controls.image_url.touched || !!actionState.error()?.fields?.['image_url']"></label>
+    <small class="hint" id="description-hint">{{ text.descriptionHint }}</small>
+    <label class="d-field" for="menu-station">{{ text.preparation_station }}<select class="d-select" id="menu-station" name="preparation_station" formControlName="preparation_station" required aria-describedby="menu-feedback" [attr.aria-invalid]="form.controls.preparation_station.invalid && form.controls.preparation_station.touched || !!actionState.error()?.fields?.['preparation_station']">@for (station of stations; track station) { <option [value]="station">{{ text.stations[station] }}</option> }</select></label>
+    <label class="toggle" for="menu-age"><input id="menu-age" name="legal_age_required" type="checkbox" formControlName="legal_age_required" aria-describedby="age-hint">{{ text.legal_age_required }}</label><small class="hint" id="age-hint">{{ text.ageHint }}</small>
+    <label class="toggle" for="menu-active"><input id="menu-active" name="active" type="checkbox" formControlName="active">{{ text.active }}</label>
+    <section class="recipe" aria-labelledby="recipe-title" formArrayName="ingredients">
+     <h3 id="recipe-title">{{ text.recipe }}</h3><p class="hint" id="recipe-hint">{{ text.recipeHint }}</p>
+     @if (!inventory().length) { <p class="hint">{{ text.noIngredients }}</p> }
+     @for (row of recipe.controls; track row; let index = $index) {
+      <div class="recipe-row" [formGroupName]="index">
+       <label class="d-field" [for]="'recipe-item-' + index">{{ text.ingredient }} {{ index + 1 }}<select class="d-select" [id]="'recipe-item-' + index" [name]="'ingredients.' + index + '.inventory_item_id'" formControlName="inventory_item_id" required aria-describedby="recipe-hint menu-feedback" [attr.aria-invalid]="row.controls.inventory_item_id.invalid && row.controls.inventory_item_id.touched || !!actionState.error()?.fields?.['ingredients.' + index + '.inventory_item_id']"><option value="">{{ text.select }}</option>@for (ingredient of inventory(); track ingredient.id) { <option [value]="ingredient.id">{{ ingredient.name }} · #{{ ingredient.id }} · {{ ingredient.unit }}</option> }</select></label>
+       <label class="d-field" [for]="'recipe-quantity-' + index">{{ text.quantity }} · {{ ingredientUnit(row.controls.inventory_item_id.value) }}<input class="d-input" [id]="'recipe-quantity-' + index" [name]="'ingredients.' + index + '.quantity'" formControlName="quantity" required inputmode="decimal" aria-describedby="quantity-hint menu-feedback" [attr.aria-invalid]="row.controls.quantity.invalid && row.controls.quantity.touched || !!actionState.error()?.fields?.['ingredients.' + index + '.quantity']"></label>
+       <button dButton variant="secondary" type="button" [attr.aria-label]="text.removeIngredient + ' ' + (index + 1)" (click)="removeIngredient(index)">{{ text.removeIngredient }}</button>
+      </div>
+     }
+     <small class="hint" id="quantity-hint">{{ text.quantityHint }}</small>
+     @if (recipe.hasError('duplicate')) { <p class="d-field-error" role="alert">{{ text.duplicate }}</p> }
+     <div class="actions"><button dButton variant="secondary" type="button" [disabled]="!inventory().length" (click)="addIngredient()">{{ text.addIngredient }}</button></div>
+    </section>
+   </fieldset>
+   @if (form.invalid && form.touched) { <p class="d-field-error" role="alert">{{ text.invalid }}</p> }
+   <div class="actions"><button dButton variant="secondary" type="button" [disabled]="actionState.busy()" (click)="editor.close()">{{ text.cancel }}</button><button dButton type="submit" [disabled]="actionState.busy()">{{ selected() ? text.save : text.create }}</button></div>
+  </form>
+ }
+</app-dialog>
+<app-dialog #confirmation [title]="text.deleteQuestion" [closeLabel]="text.close" [busy]="actionState.busy()"><p class="record-name">{{ selected()?.name }}</p><p class="hint">{{ text.deleteHint }}</p><app-form-feedback [state]="actionState" [english]="locale === 'en'" /><div class="actions"><button dButton variant="secondary" type="button" [disabled]="actionState.busy()" (click)="confirmation.close()">{{ text.cancel }}</button><button dButton variant="danger" type="button" [disabled]="actionState.busy()" (click)="remove()">{{ text.confirmDelete }}</button></div></app-dialog>

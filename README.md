@@ -17,7 +17,7 @@ La aplicación usa NgModules y Axios. `AppRoutingModule` carga cada área bajo d
 - `guards/` verifica sesión y rol. `shared/` reúne componentes reutilizables.
 - `environments/` define la URL de la API. La compilación de producción reemplaza `environment.ts` por `environment.prod.ts`. Ambos usan `/api/v1` con la configuración actual.
 
-El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone del catálogo, inventario y configuración del restaurante. Chef y Cliente conservan el layout base para incorporar sus páginas.
+El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone de elementos de menú, catálogo, inventario y configuración del restaurante. Chef y Cliente conservan el layout base para incorporar sus páginas.
 
 ## Base visual compartida
 
@@ -35,6 +35,14 @@ Las etiquetas `.d-badge[data-status]` conservan los estados `pending`, `in_prepa
 Inicia sesión con una cuenta Super Admin (incluye OTP). En `/super-admin` se muestra el listado paginado por el backend, con detalle de cada restaurante.
 
 **Nuevo restaurante** solicita nombre, dirección, teléfono y los datos del Administrador: nombre, correo y contraseña confirmada. **Ver detalle** permite editar la información general, el logo y la cuenta Stripe Connect, así como activar, suspender y eliminar con confirmación. La eliminación es una baja lógica y conserva el historial según el backend. Laravel aplica las reglas de acceso y las validaciones.
+
+## Elementos de menú del Administrador (RFA-013)
+
+Abre **Menú** o entra en `/admin/menu`. Permite listar, crear, editar y dar de baja elementos con categoría, nombre, precio de venta, descripción e imagen opcionales, estación (`none`, `kitchen`, `bar`), indicador de edad legal y estado activo.
+
+La receta admite ingredientes del restaurante, sin duplicados, y cantidades positivas de hasta tres decimales en la unidad de cada ingrediente. Puede quedar vacía y no exige ni descuenta stock al guardarse. Los selectores cargan todas las páginas de categorías e ingredientes.
+
+La edición consulta el elemento actualizado y envía por `PUT` solo lo modificado. Los cambios de datos generales conservan la receta; quitar todas sus partidas envía `ingredients: []`. La baja requiere confirmación y muestra los conflictos que devuelva Laravel. Los cambios usan la auditoría existente del backend y no requieren PIN.
 
 ## Inventario del Administrador (RFA-023)
 
