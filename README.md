@@ -17,7 +17,7 @@ La aplicación usa NgModules y Axios. `AppRoutingModule` carga cada área bajo d
 - `guards/` verifica sesión y rol. `shared/` reúne componentes reutilizables.
 - `environments/` define la URL de la API. La compilación de producción reemplaza `environment.ts` por `environment.prod.ts`. Ambos usan `/api/v1` con la configuración actual.
 
-El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone de empleados, elementos de menú, catálogo, inventario y configuración del restaurante. Chef y Cliente conservan el layout base para incorporar sus páginas.
+El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. Super Admin dispone de la gestión de restaurantes y Mesero de la precuenta. Administrador dispone de consulta de clientes, promociones, empleados, elementos de menú, catálogo, inventario y configuración del restaurante. Chef y Cliente conservan el layout base para incorporar sus páginas.
 
 ## Base visual compartida
 
@@ -35,6 +35,18 @@ Las etiquetas `.d-badge[data-status]` conservan los estados `pending`, `in_prepa
 Inicia sesión con una cuenta Super Admin (incluye OTP). En `/super-admin` se muestra el listado paginado por el backend, con detalle de cada restaurante.
 
 **Nuevo restaurante** solicita nombre, dirección, teléfono y los datos del Administrador: nombre, correo y contraseña confirmada. **Ver detalle** permite editar la información general, el logo y la cuenta Stripe Connect, así como activar, suspender y eliminar con confirmación. La eliminación es una baja lógica y conserva el historial según el backend. Laravel aplica las reglas de acceso y las validaciones.
+
+## Clientes y promociones del Administrador
+
+**Clientes**, en `/admin/customers`, permite consultar el listado paginado y el detalle de clientes vinculados al restaurante. Muestra nombre, correo, teléfono, estado y saldo de puntos de ese restaurante. Esta página es de consulta.
+
+**Promociones**, en `/admin/promotions`, permite listar, crear, editar, activar/desactivar y dar de baja con confirmación. Integra las condiciones `min_amount`, `product_quantity` y `category_discount`, y descuentos `percentage` o `fixed_amount`.
+
+Las cantidades de productos deben ser enteras y positivas. El descuento por categoría requiere al menos una categoría y no usa valor de condición. Los descuentos porcentuales admiten hasta 100 y los montos hasta 99999999.99, con hasta dos decimales.
+
+Las fechas mantienen el formato `YYYY-MM-DD`. Los días se envían como abreviaciones `Mon` a `Sun` separadas por comas; no seleccionar días elimina la restricción. El horario requiere ambas horas diferentes o ninguna y admite cruzar medianoche. Las horas conservan sus segundos y se envían sin conversión de zona horaria.
+
+Los selectores múltiples incluyen todas las páginas de elementos de menú y categorías del restaurante. La edición consulta el registro actual y envía solo los cambios mediante `PUT`; quitar todas las asociaciones envía listas vacías. Los errores de Laravel conservan los datos para corregirlos.
 
 ## Empleados del Administrador (RFA-024)
 

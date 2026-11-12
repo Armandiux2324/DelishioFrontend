@@ -1,3 +1,4 @@
+import { AdminCustomer, AdminPage, Promotion, PromotionPayload } from './customer-promotion.models';
 import { Employee, EmployeeCreate, EmployeeCreated, EmployeePage, EmployeeUpdate } from './employee.models';
 import { MenuItem, MenuItemPayload, MenuItemsPage } from './menu-item.models';
 import { InventoryItem, InventoryLoss, InventoryLossPayload, InventoryPage, InventoryPayload } from './inventory.models';
@@ -104,6 +105,14 @@ export class ApiService {
   createEmployee(payload: EmployeeCreate) { return this.client.post<EmployeeCreated>('/admin/employees', payload, this.auth()); }
   updateEmployee(id: number, payload: EmployeeUpdate) { return this.client.put<{data:Employee}>('/admin/employees/' + id, payload, this.auth()); }
   deleteEmployee(id: number) { return this.client.delete<void>('/admin/employees/' + id, this.auth()); }
+
+  getAdminCustomers(page = 1) { return this.client.get<AdminPage<AdminCustomer>>('/admin/customers', { ...this.auth(), params: { page } }); }
+  getAdminCustomer(id: number) { return this.client.get<{data:AdminCustomer}>('/admin/customers/' + id, this.auth()); }
+  getPromotions(page = 1) { return this.client.get<AdminPage<Promotion>>('/admin/promotions', { ...this.auth(), params: { page } }); }
+  getPromotion(id: number) { return this.client.get<{data:Promotion}>('/admin/promotions/' + id, this.auth()); }
+  createPromotion(payload: PromotionPayload) { return this.client.post<{data:Promotion}>('/admin/promotions', payload, this.auth()); }
+  updatePromotion(id: number, payload: Partial<PromotionPayload>) { return this.client.put<{data:Promotion}>('/admin/promotions/' + id, payload, this.auth()); }
+  deletePromotion(id: number) { return this.client.delete<void>('/admin/promotions/' + id, this.auth()); }
 
   getRestaurantSettings() {
     return this.client.get<{ data: RestaurantSettings }>('/admin/restaurant/configuration', this.auth());

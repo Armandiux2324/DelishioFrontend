@@ -1,3 +1,5 @@
+import { CustomersComponent } from './customers/customers.component';
+import { PromotionsComponent } from './promotions/promotions.component';
 import { EmployeesComponent } from './employees/employees.component';
 import { MenuComponent } from './menu/menu.component';
 import { InventoryComponent } from './inventory/inventory.component';
@@ -11,7 +13,7 @@ import { AdminLayoutComponent } from '../../layouts/admin-layout/admin-layout.co
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-  declarations: [AdminLayoutComponent, SettingsComponent, CatalogComponent, InventoryComponent, MenuComponent, EmployeesComponent],
+  declarations: [AdminLayoutComponent, SettingsComponent, CatalogComponent, InventoryComponent, MenuComponent, EmployeesComponent, CustomersComponent, PromotionsComponent],
   imports: [
     CommonModule, SharedModule, ReactiveFormsModule,
     RouterModule.forChild([{
@@ -19,6 +21,8 @@ import { SharedModule } from '../../shared/shared.module';
       component: AdminLayoutComponent,
       children: [
         { path: 'settings', component: SettingsComponent },
+        { path: 'customers', component: CustomersComponent },
+        { path: 'promotions', component: PromotionsComponent },
         { path: 'employees', component: EmployeesComponent },
         { path: 'menu', component: MenuComponent },
         { path: 'inventory', pathMatch: 'full', redirectTo: 'inventory/items' },
