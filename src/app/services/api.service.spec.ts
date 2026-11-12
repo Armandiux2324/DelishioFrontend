@@ -209,4 +209,9 @@ describe('ApiService using Axios', () => {
     expect(JSON.parse(calls[7].data)).toEqual({inventory_item_id:10,quantity:'0.125',reason:'Damaged'});
     for(const config of calls)expect(config.headers.get('Authorization')).toBe('Bearer token');
   });
+
+ it('uses authenticated menu routes, PUT changes and exact recipe payloads',async()=>{
+  await api.getMenuItems(2);await api.getMenuItem(30);await api.createMenuItem({name:'Bread',category_id:10,sale_price:'15.25',description:null,image_url:null,legal_age_required:true,preparation_station:'bar',active:true,ingredients:[{inventory_item_id:20,quantity:'0.125'}]});await api.updateMenuItem(30,{ingredients:[],active:false});await api.deleteMenuItem(30);
+  const calls=adapter.calls.allArgs().map(([config])=>config);expect(calls.map(config=>config.method)).toEqual(['get','get','post','put','delete']);expect(calls.map(config=>config.url)).toEqual(['/admin/menu-items','/admin/menu-items/30','/admin/menu-items','/admin/menu-items/30','/admin/menu-items/30']);expect(calls[0].params).toEqual({page:2});expect(JSON.parse(calls[2].data).ingredients).toEqual([{inventory_item_id:20,quantity:'0.125'}]);expect(JSON.parse(calls[3].data)).toEqual({ingredients:[],active:false});for(const config of calls)expect(config.headers.get('Authorization')).toBe('Bearer token');
+ });
 });

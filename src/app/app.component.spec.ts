@@ -17,9 +17,10 @@ describe('Delishio routing', () => {
 
   beforeEach(() => {
     sessionStorage.removeItem('delishio.access_token');
-    api = jasmine.createSpyObj<ApiService>('ApiService', ['getUser', 'getWaiterOrders', 'getRestaurants', 'getRestaurantSettings', 'getCatalog', 'getInventoryItems', 'getInventoryLosses']);
+    api = jasmine.createSpyObj<ApiService>('ApiService', ['getUser', 'getWaiterOrders', 'getRestaurants', 'getRestaurantSettings', 'getCatalog', 'getInventoryItems', 'getInventoryLosses', 'getMenuItems']);
     api.getInventoryItems.and.resolveTo({ data: { data: [], meta: { current_page: 1, last_page: 1, total: 0 } } } as never);
     api.getInventoryLosses.and.resolveTo({ data: { data: [], meta: { current_page: 1, last_page: 1, total: 0 } } } as never);
+    api.getMenuItems.and.resolveTo({data:{data:[],meta:{current_page:1,last_page:1,total:0}}} as never);
     api.getCatalog.and.resolveTo({ data: { data: [], meta: { current_page: 1, last_page: 1, total: 0 } } } as never);
     api.getUser.and.resolveTo({ data: waiter.user } as AxiosResponse);
     api.getRestaurants.and.resolveTo({ data: { data: [], meta: { current_page: 1, last_page: 1, total: 0 } } } as never);
@@ -133,4 +134,8 @@ describe('Delishio routing', () => {
     await harness.navigateByUrl('/admin/inventory');expect(TestBed.inject(Router).url).toBe('/admin/inventory/items');
     for(const section of ['items','losses']){await harness.navigateByUrl('/admin/inventory/'+section);expect(harness.routeNativeElement?.querySelector('app-inventory')).not.toBeNull();expect(harness.routeNativeElement?.querySelector('a[href="/admin/inventory"]')?.getAttribute('aria-current')).toBe('page');expect(harness.routeNativeElement?.querySelector('.tabs a[aria-current="page"]')?.getAttribute('href')).toBe('/admin/inventory/'+section);}
   });
+
+ it('protects menu access and opens the page for an Administrator',async()=>{
+  const harness=await RouterTestingHarness.create('/admin/menu');expect(TestBed.inject(Router).url).toBe('/login');session.start(waiter);await harness.navigateByUrl('/admin/menu');expect(TestBed.inject(Router).url).toBe('/mesero');const user={...waiter.user,employee:{role:'admin' as const}};session.start({...waiter,user});api.getUser.and.resolveTo({data:user} as AxiosResponse);await harness.navigateByUrl('/admin/menu');expect(harness.routeNativeElement?.querySelector('app-menu-items')).not.toBeNull();expect(harness.routeNativeElement?.querySelector('a[href="/admin/menu"]')?.getAttribute('aria-current')).toBe('page');
+ });
 });

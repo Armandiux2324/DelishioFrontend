@@ -1,3 +1,4 @@
+import { MenuItem, MenuItemPayload, MenuItemsPage } from './menu-item.models';
 import { InventoryItem, InventoryLoss, InventoryLossPayload, InventoryPage, InventoryPayload } from './inventory.models';
 import { CatalogKind, CatalogPage, CatalogPayloads, CatalogRecords } from './catalog.models';
 import { RestaurantSettings, RestaurantSettingsValues } from './restaurant-settings.models';
@@ -90,6 +91,12 @@ export class ApiService {
   getInventoryLosses(page = 1) { return this.client.get<InventoryPage<InventoryLoss>>('/admin/inventory-losses', { ...this.auth(), params: { page } }); }
   getInventoryLoss(id: number) { return this.client.get<{ data: InventoryLoss }>('/admin/inventory-losses/' + id, this.auth()); }
   createInventoryLoss(payload: InventoryLossPayload) { return this.client.post<{ data: InventoryLoss }>('/admin/inventory-losses', payload, this.auth()); }
+
+  getMenuItems(page = 1) { return this.client.get<MenuItemsPage>('/admin/menu-items', { ...this.auth(), params: { page } }); }
+  getMenuItem(id: number) { return this.client.get<{ data: MenuItem }>('/admin/menu-items/' + id, this.auth()); }
+  createMenuItem(payload: MenuItemPayload) { return this.client.post<{ data: MenuItem }>('/admin/menu-items', payload, this.auth()); }
+  updateMenuItem(id: number, payload: Partial<MenuItemPayload>) { return this.client.put<{ data: MenuItem }>('/admin/menu-items/' + id, payload, this.auth()); }
+  deleteMenuItem(id: number) { return this.client.delete<void>('/admin/menu-items/' + id, this.auth()); }
 
   getRestaurantSettings() {
     return this.client.get<{ data: RestaurantSettings }>('/admin/restaurant/configuration', this.auth());
