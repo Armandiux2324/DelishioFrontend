@@ -1,5 +1,6 @@
 <main class="layout" [attr.lang]="language()" [attr.aria-busy]="busy()">
   @let text = t();
+  @let links = account();
   <header class="top"><strong>Delishio</strong>
     <label class="d-field">Idioma / Language
       <select class="d-select" [ngModel]="language()" (ngModelChange)="language.set($event)">
@@ -8,7 +9,7 @@
     </label>
   </header>
   @if (busy()) { <p role="status">{{ text.working }}</p> }
-  @if (failed()) { <p role="alert">{{ ticket() ? text.codeError : text.credentials }}</p> }
+  @if (failed()) { <p role="alert">{{ state.error()?.message ?? (ticket() ? text.codeError : text.credentials) }}</p> }
   <section class="card" aria-labelledby="access-title">
     <h1 id="access-title">{{ text.title }}</h1>
     @if (ticket()) {
@@ -25,4 +26,9 @@
       </form>
     }
   </section>
+  <nav class="account-links" [attr.aria-label]="language() === 'en' ? 'Account access' : 'Acceso a la cuenta'">
+    <a routerLink="/register" [state]="{ locale: language() }">{{ links.registerAction }}</a>
+    <a routerLink="/verify-email" [state]="{ locale: language() }">{{ links.verifyLink }}</a>
+    <a routerLink="/forgot-password" [state]="{ locale: language() }">{{ links.forgotLink }}</a>
+  </nav>
 </main>

@@ -36,6 +36,8 @@ describe('Delishio routing', () => {
     expect(harness.routeNativeElement?.querySelector('h1')?.textContent).toContain('Iniciar sesión');
     await harness.navigateByUrl('/mesero');
     expect(TestBed.inject(Router).url).toBe('/login');
+    await harness.navigateByUrl('/profile');
+    expect(TestBed.inject(Router).url).toBe('/login');
     expect(api.getUser).not.toHaveBeenCalled();
   });
 

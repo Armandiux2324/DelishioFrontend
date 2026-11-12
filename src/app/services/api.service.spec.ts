@@ -101,4 +101,46 @@ describe('ApiService using Axios', () => {
     await expectation;
     expect(session.token).toBe('new-token');
   });
+  it('uses public endpoints, JSON and locale headers for the account flows', async () => {
+    const payload = {
+      name: 'Customer', username: null, email: 'client@example.test', phone: '123',
+      locale: 'en' as const, password: 'password123', password_confirmation: 'password123',
+    };
+    await api.register(payload);
+    await api.verifyEmail(payload.email, '012345', 'en');
+    await api.resendVerification(payload.email, 'en');
+    await api.forgotPassword(payload.email, 'en');
+    await api.resetPassword({
+      email: payload.email, code: '012345', password: payload.password, password_confirmation: payload.password,
+    }, 'en');
+    expect(adapter.calls.allArgs().map(([config]) => config.url)).toEqual([
+      '/auth/register', '/auth/verify-email', '/auth/verify-email/resend',
+      '/auth/password/forgot', '/auth/password/reset',
+    ]);
+    for (const [config] of adapter.calls.allArgs()) {
+      expect(config.method).toBe('post');
+      expect(config.headers.get('Authorization')).toBeUndefined();
+      expect(config.headers.get('Accept')).toBe('application/json');
+      expect(config.headers.get('Accept-Language')).toBe('en');
+    }
+    expect(JSON.parse(adapter.calls.first().args[0].data)).toEqual(payload);
+    expect(JSON.parse(adapter.calls.argsFor(1)[0].data).code).toBe('012345');
+  });
+
+  it('updates the profile with PATCH and authorizes 2FA changes with the current password', async () => {
+    const payload = { name: 'Updated', username: null, locale: 'es' as const, phone: null };
+    await api.updateProfile(payload);
+    expect(adapter.calls.mostRecent().args[0].method).toBe('patch');
+    expect(adapter.calls.mostRecent().args[0].url).toBe('/user');
+    expect(JSON.parse(adapter.calls.mostRecent().args[0].data)).toEqual(payload);
+    await api.setTwoFactor(true, 'current-password');
+    expect(adapter.calls.mostRecent().args[0].url).toBe('/auth/2fa/enable');
+    await api.setTwoFactor(false, 'current-password');
+    expect(adapter.calls.mostRecent().args[0].url).toBe('/auth/2fa/disable');
+    for (const [config] of adapter.calls.allArgs()) {
+      expect(config.headers.get('Authorization')).toBe('Bearer token');
+    }
+    expect(JSON.parse(adapter.calls.mostRecent().args[0].data)).toEqual({ password: 'current-password' });
+  });
+
 });

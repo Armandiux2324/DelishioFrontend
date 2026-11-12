@@ -30,6 +30,15 @@ Los layouts de Super Admin y Administrador comparten navegación lateral y un me
 - `layout-navigation.ts` define las etiquetas en español e inglés. Las secciones que todavía no tienen página aparecen deshabilitadas con la indicación Próximamente.
 
 Las etiquetas `.d-badge[data-status]` conservan los estados `pending`, `in_preparation`, `ready`, `cancelled`, `error`, `suspended` y `active`. El texto visible debe localizarse al consumirlas. Los controles nativos usan `d-field`, `d-input`, `d-select`, `d-field-hint` y `d-field-error`; cada campo debe conservar su etiqueta y enlazar sus mensajes con `aria-describedby`.
+## Autenticación y perfil
+
+El acceso comienza en `/login`. Desde ahí se puede registrar una cuenta de Cliente en `/register`, verificar el correo en `/verify-email` y recuperar la contraseña mediante `/forgot-password` y `/reset-password`.
+
+El registro requiere nombre, correo, teléfono y contraseña confirmada. El usuario es opcional y el idioma puede ser español o inglés. La cuenta debe verificarse con el código enviado por correo antes de iniciar sesión. El login solicita un segundo código cuando el backend indica que se requiere 2FA.
+
+El enlace de perfil del encabezado abre `/profile` para cualquier rol autenticado. Permite actualizar nombre, usuario, idioma y teléfono. El teléfono aplica a Clientes y empleados. El correo se muestra para consulta. Los cambios de 2FA requieren la contraseña actual y el Super Admin tiene 2FA permanente.
+
+Para probar los correos localmente, usa `MAIL_MAILER=log` y `QUEUE_CONNECTION=sync` en el backend y consulta los códigos en su log. En producción, configura el transporte de correo y los workers de la cola cuando corresponda. La recuperación utiliza los códigos del backend y revoca las sesiones anteriores de esa cuenta.
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
 
 ## Development server

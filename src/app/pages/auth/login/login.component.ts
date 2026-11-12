@@ -1,6 +1,9 @@
+import { Location } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
+import { ApiFormState } from '../../../shared/forms/api-form-state';
+import { accountCopy } from '../account-copy';
 import { Session } from '../../../services/api.models';
 import { SessionService } from '../../../services/session.service';
 
@@ -30,8 +33,11 @@ export class LoginComponent {
   private readonly session = inject(SessionService);
   private readonly router = inject(Router);
   protected password = '';
-  protected readonly language = signal<'es' | 'en'>('es');
+  private readonly navigation = (inject(Location).getState() ?? {}) as { locale?: string };
+  protected readonly language = signal<'es' | 'en'>(this.navigation.locale === 'en' ? 'en' : 'es');
   protected readonly t = computed(() => labels[this.language()]);
+  protected readonly account = computed(() => accountCopy[this.language()]);
+  protected readonly state = new ApiFormState(() => this.language());
   protected readonly ticket = signal<string | null>(null);
   protected readonly busy = signal(false);
   protected readonly failed = signal(false);
@@ -39,7 +45,7 @@ export class LoginComponent {
   protected async signIn(login: string, password: string): Promise<void> {
     this.password = '';
     await this.run(async () => {
-      const { data } = await this.api.login(login, password);
+      const { data } = await this.api.login(login, password, this.language());
       if ('requires_2fa' in data) {
         this.ticket.set(data.ticket);
       } else {
@@ -52,7 +58,7 @@ export class LoginComponent {
     const ticket = this.ticket();
     if (ticket === null) return;
     await this.run(async () => {
-      const { data } = await this.api.verifyTwoFactor(ticket, code);
+      const { data } = await this.api.verifyTwoFactor(ticket, code, this.language());
       await this.startSession(data);
     });
   }
@@ -78,9 +84,8 @@ export class LoginComponent {
     this.busy.set(true);
     this.failed.set(false);
     try {
-      await work();
-    } catch {
-      this.failed.set(true);
+      await this.state.run(work);
+      this.failed.set(this.state.error() !== null);
     } finally {
       this.busy.set(false);
     }

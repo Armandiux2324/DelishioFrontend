@@ -7,3 +7,6 @@ h1 { margin: 0; font-size: 1.875rem; line-height: 1.2; letter-spacing: -.035em; 
 form { display: grid; gap: 1.25rem; margin-top: 1.5rem; }
 [role=alert] { color: var(--d-danger); }
 [role=status] { color: var(--d-muted); }
+
+.account-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; font-size: .875rem; }
+.account-links a { color: var(--d-brand); text-underline-offset: 3px; }

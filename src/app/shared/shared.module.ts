@@ -6,8 +6,9 @@ import {
   LucideUtensils, LucidePercent, LucidePackage, LucideChefHat, LucideUsers,
   LucideTag, LucideChartNoAxesCombined, LucideSettings, LucideReceiptText,
   LucideGift, LucideMenu, LucideX, LucideClock3, LucideLoaderCircle,
-  LucideCircleAlert, LucideSearch, LucideLogOut,
+  LucideCircleAlert, LucideSearch, LucideLogOut, LucideUserRound,
 } from '@lucide/angular';
+import { FormFeedbackComponent } from './forms/form-feedback.component';
 import { AppShellComponent } from './app-shell/app-shell.component';
 import { ButtonDirective } from './button/button.directive';
 import { DialogComponent } from './dialog/dialog.component';
@@ -19,7 +20,7 @@ import { SessionHeaderComponent } from './session-header/session-header.componen
 
 const components = [
   AppShellComponent, ButtonDirective, DialogComponent, FeedbackComponent,
-  NavigationComponent, PageHeadingComponent, PanelComponent, SessionHeaderComponent,
+  NavigationComponent, PageHeadingComponent, PanelComponent, SessionHeaderComponent, FormFeedbackComponent,
 ];
 
 @NgModule({
@@ -30,7 +31,7 @@ const components = [
       LucideBuilding2, LucideLayoutDashboard, LucideUtensils, LucidePercent,
       LucidePackage, LucideChefHat, LucideUsers, LucideTag, LucideChartNoAxesCombined,
       LucideSettings, LucideReceiptText, LucideGift, LucideMenu, LucideX,
-      LucideClock3, LucideLoaderCircle, LucideCircleAlert, LucideSearch, LucideLogOut,
+      LucideClock3, LucideLoaderCircle, LucideCircleAlert, LucideSearch, LucideLogOut, LucideUserRound,
     ),
   ],
   exports: [...components, LucideDynamicIcon],

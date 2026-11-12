@@ -1,0 +1,55 @@
+<main [attr.lang]="language()">
+  @let text = t();
+  <header class="top">
+    <a class="brand" routerLink="/login">Delishio</a>
+    <label class="d-field">{{ text.language }}
+      <select class="d-select" [disabled]="state.busy()" [ngModel]="language()" (ngModelChange)="language.set($event)">
+        <option value="es">Español</option><option value="en">English</option>
+      </select>
+    </label>
+  </header>
+  <app-panel><div class="content">
+    <h1>{{ text.register }}</h1>
+    <app-form-feedback id="account-feedback" [state]="state" [english]="language() === 'en'" />
+    <form [formGroup]="form" (ngSubmit)="submit()" [attr.aria-busy]="state.busy()">
+      <label class="d-field" for="name">{{ text.name }}
+        <input class="d-input" id="name" name="name" type="text" formControlName="name"
+          [attr.aria-invalid]="(form.controls.name.invalid && form.controls.name.touched) || !!state.error()?.fields?.['name']"
+          aria-describedby="account-feedback" required maxlength="255" autocomplete="name">
+      </label>
+      <label class="d-field" for="username">{{ text.username }} · {{ text.optional }}
+        <input class="d-input" id="username" name="username" type="text" formControlName="username"
+          [attr.aria-invalid]="(form.controls.username.invalid && form.controls.username.touched) || !!state.error()?.fields?.['username']"
+          aria-describedby="account-feedback" maxlength="50" autocomplete="username" autocapitalize="none" spellcheck="false">
+      </label>
+      <small class="d-field-hint">{{ text.usernameHint }}</small>
+      <label class="d-field" for="email">{{ text.email }}
+        <input class="d-input" id="email" name="email" type="email" formControlName="email"
+          [attr.aria-invalid]="(form.controls.email.invalid && form.controls.email.touched) || !!state.error()?.fields?.['email']"
+          aria-describedby="account-feedback" required maxlength="255" autocomplete="email" autocapitalize="none">
+      </label>
+      <label class="d-field" for="phone">{{ text.phone }}
+        <input class="d-input" id="phone" name="phone" type="tel" formControlName="phone"
+          [attr.aria-invalid]="(form.controls.phone.invalid && form.controls.phone.touched) || !!state.error()?.fields?.['phone']"
+          aria-describedby="account-feedback" required maxlength="20" autocomplete="tel">
+      </label>
+      <label class="d-field" for="password">{{ text.password }}
+        <input class="d-input" id="password" name="password" type="password" formControlName="password"
+          [attr.aria-invalid]="(form.controls.password.invalid && form.controls.password.touched) || !!state.error()?.fields?.['password']"
+          aria-describedby="account-feedback" required minlength="8" autocomplete="new-password">
+      </label>
+      <small class="d-field-hint">{{ text.passwordHint }}</small>
+      <label class="d-field" for="password_confirmation">{{ text.confirmPassword }}
+        <input class="d-input" id="password_confirmation" name="password_confirmation" type="password" formControlName="password_confirmation"
+          [attr.aria-invalid]="(form.controls.password_confirmation.invalid && form.controls.password_confirmation.touched) || !!state.error()?.fields?.['password_confirmation']"
+          aria-describedby="account-feedback" required autocomplete="new-password">
+      </label>
+      @if (form.hasError('passwordMismatch') && form.controls.password_confirmation.touched) {
+        <p class="d-field-error" role="alert">{{ text.mismatch }}</p>
+      }
+      @if (form.invalid && form.touched) { <p class="d-field-error" role="alert">{{ text.invalidForm }}</p> }
+      <button dButton type="submit" [disabled]="state.busy()">{{ text.registerAction }}</button>
+    </form>
+  </div></app-panel>
+  <nav><a routerLink="/login" [state]="{ locale: language() }">{{ text.backToLogin }}</a></nav>
+</main>
