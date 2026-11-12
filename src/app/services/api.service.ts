@@ -1,3 +1,4 @@
+import { Employee, EmployeeCreate, EmployeeCreated, EmployeePage, EmployeeUpdate } from './employee.models';
 import { MenuItem, MenuItemPayload, MenuItemsPage } from './menu-item.models';
 import { InventoryItem, InventoryLoss, InventoryLossPayload, InventoryPage, InventoryPayload } from './inventory.models';
 import { CatalogKind, CatalogPage, CatalogPayloads, CatalogRecords } from './catalog.models';
@@ -97,6 +98,12 @@ export class ApiService {
   createMenuItem(payload: MenuItemPayload) { return this.client.post<{ data: MenuItem }>('/admin/menu-items', payload, this.auth()); }
   updateMenuItem(id: number, payload: Partial<MenuItemPayload>) { return this.client.put<{ data: MenuItem }>('/admin/menu-items/' + id, payload, this.auth()); }
   deleteMenuItem(id: number) { return this.client.delete<void>('/admin/menu-items/' + id, this.auth()); }
+
+  getEmployees(page = 1) { return this.client.get<EmployeePage>('/admin/employees', { ...this.auth(), params: { page } }); }
+  getEmployee(id: number) { return this.client.get<{data:Employee}>('/admin/employees/' + id, this.auth()); }
+  createEmployee(payload: EmployeeCreate) { return this.client.post<EmployeeCreated>('/admin/employees', payload, this.auth()); }
+  updateEmployee(id: number, payload: EmployeeUpdate) { return this.client.put<{data:Employee}>('/admin/employees/' + id, payload, this.auth()); }
+  deleteEmployee(id: number) { return this.client.delete<void>('/admin/employees/' + id, this.auth()); }
 
   getRestaurantSettings() {
     return this.client.get<{ data: RestaurantSettings }>('/admin/restaurant/configuration', this.auth());
