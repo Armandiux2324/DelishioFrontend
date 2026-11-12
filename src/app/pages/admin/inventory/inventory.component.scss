@@ -1,0 +1,19 @@
+:host { display: block; }
+.tabs, .actions, .row-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
+.tabs { margin-bottom: 1.5rem; }
+.tabs a.active { background: var(--d-brand-soft); color: var(--d-brand); border-color: transparent; }
+.notice { padding: .75rem 1rem; color: var(--d-success); background: var(--d-success-soft); border-radius: var(--d-radius-sm); }
+.table-scroll { position: relative; border: 0; border-radius: 0; }
+table { min-width: 44rem; }
+td { max-width: 20rem; overflow-wrap: anywhere; }
+.reason { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pagination { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; padding: 1rem; border-top: 1px solid var(--d-line); font-size: .8125rem; color: var(--d-muted); }
+.pagination span { margin-inline-end: auto; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 1rem; }
+form { display: grid; gap: 1rem; }
+.hint { color: var(--d-muted); font-size: .8125rem; line-height: 1.65; }
+textarea { resize: vertical; min-height: 7rem; }
+.actions { justify-content: flex-end; margin-top: 1rem; }
+.record-name { font-weight: 600; overflow-wrap: anywhere; }
+dl { font-size: .875rem; } dt { color: var(--d-muted); margin-top: 1rem; } dd { margin: .25rem 0 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+@media (max-width: 40rem) { .actions .d-button { flex: 1 1 auto; } }

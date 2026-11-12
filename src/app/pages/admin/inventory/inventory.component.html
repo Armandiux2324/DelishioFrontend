@@ -1,0 +1,70 @@
+
+<app-page-heading [title]="lossesView ? text.losses : text.items" [subtitle]="text.subtitle">
+  <button dButton variant="secondary" type="button" [disabled]="busy()" (click)="loadPage(pagination().current_page)">{{ text.refresh }}</button>
+  <button #addButton dButton type="button" [disabled]="busy()" (click)="lossesView ? openLoss() : openItem()">{{ lossesView ? text.register : text.add }}</button>
+</app-page-heading>
+<nav class="tabs" [attr.aria-label]="text.inventory"><a dButton variant="secondary" routerLink="/admin/inventory/items" routerLinkActive="active" ariaCurrentWhenActive="page">{{ text.items }}</a><a dButton variant="secondary" routerLink="/admin/inventory/losses" routerLinkActive="active" ariaCurrentWhenActive="page">{{ text.losses }}</a></nav>
+@if (notice()) { <p class="notice" role="status">{{ notice() }}</p> }
+<app-form-feedback [state]="loadState" [english]="locale === 'en'" />
+@if (!loadState.busy() && !loadState.error()) {
+  <app-panel>
+    @if (lossesView ? losses().length : items().length) {
+      <div class="d-table-wrap table-scroll" tabindex="0" [attr.aria-label]="lossesView ? text.losses : text.items">
+        <table class="d-table"><caption class="d-visually-hidden">{{ lossesView ? text.losses : text.items }}</caption>
+          @if (lossesView) {
+            <thead><tr><th scope="col">{{ text.ingredient }}</th><th scope="col">{{ text.quantity }}</th><th scope="col">{{ text.reason }}</th><th scope="col">{{ text.date }}</th><th scope="col"><span class="d-visually-hidden">{{ text.detail }}</span></th></tr></thead>
+            <tbody>@for (loss of losses(); track loss.id) { <tr><td>{{ ingredientName(loss.inventory_item_id) }}</td><td>{{ loss.quantity }}</td><td><span class="reason">{{ loss.reason }}</span></td><td>{{ date(loss.created_at) }}</td><td><button dButton variant="ghost" type="button" [disabled]="busy()" [attr.aria-label]="text.detail + ' #' + loss.id" (click)="showLoss(loss)">{{ text.detail }}</button></td></tr> }</tbody>
+          } @else {
+            <thead><tr><th scope="col">{{ text.name }}</th><th scope="col">{{ text.unit }}</th><th scope="col">{{ text.unit_cost }}</th><th scope="col">{{ text.current_stock }}</th><th scope="col"><span class="d-visually-hidden">{{ text.edit }} / {{ text.delete }}</span></th></tr></thead>
+            <tbody>@for (item of items(); track item.id) { <tr><td>{{ item.name }}</td><td>{{ item.unit }}</td><td>{{ item.unit_cost }}</td><td>{{ item.current_stock }}</td><td><div class="row-actions"><button dButton variant="ghost" type="button" [disabled]="busy()" [attr.aria-label]="text.edit + ' — ' + item.name" (click)="openItem(item)">{{ text.edit }}</button><button dButton variant="ghost" type="button" [disabled]="busy()" [attr.aria-label]="text.delete + ' — ' + item.name" (click)="prepareDelete(item)">{{ text.delete }}</button></div></td></tr> }</tbody>
+          }
+        </table>
+      </div>
+      <footer class="pagination"><span>{{ pagination().total }} {{ text.total }} · {{ text.page }} {{ pagination().current_page }} {{ text.of }} {{ pagination().last_page }}</span><button dButton variant="secondary" type="button" [disabled]="busy() || pagination().current_page <= 1" (click)="loadPage(pagination().current_page - 1)">{{ text.previous }}</button><button dButton variant="secondary" type="button" [disabled]="busy() || pagination().current_page >= pagination().last_page" (click)="loadPage(pagination().current_page + 1)">{{ text.next }}</button></footer>
+    } @else { <app-feedback [title]="text.empty" [message]="text.emptyHint" /> }
+  </app-panel>
+}
+<app-dialog #editor [title]="selected() ? text.edit : text.add" [closeLabel]="text.close" [busy]="actionState.busy()">
+  <app-form-feedback id="item-feedback" [state]="actionState" [english]="locale === 'en'" />
+  @if (ready()) {
+    <p class="hint" id="item-hint">{{ text.itemHint }}</p>
+    <form [formGroup]="itemForm" (ngSubmit)="saveItem()" [attr.aria-busy]="actionState.busy()">
+      <fieldset [disabled]="actionState.busy()">
+        @for (field of itemFields; track field) {
+          @let control = itemForm.controls[field];
+          <label class="d-field" [for]="'item-' + field">{{ text[field] }}
+            @if (field === 'unit') { <select class="d-select" [id]="'item-' + field" [name]="field" [formControlName]="field" required [attr.aria-invalid]="control.invalid && control.touched || !!actionState.error()?.fields?.[field]" aria-describedby="item-hint item-feedback">@for (unit of units; track unit) { <option [value]="unit">{{ unit }}</option> }</select> }
+            @else { <input class="d-input" [id]="'item-' + field" [name]="field" [formControlName]="field" required [attr.maxlength]="field === 'name' ? 255 : null" [attr.inputmode]="field === 'name' ? null : 'decimal'" [attr.aria-invalid]="control.invalid && control.touched || !!actionState.error()?.fields?.[field]" [attr.aria-describedby]="'hint-' + field + ' item-feedback'"> }
+          </label>
+          <small class="hint" [id]="'hint-' + field">{{ field === 'unit_cost' ? text.costHint : field === 'current_stock' ? text.stockHint : '' }}</small>
+          @if (control.invalid && control.touched) { <span class="d-field-error" role="alert">{{ text.required }}</span> }
+        }
+      </fieldset>
+      @if (itemForm.invalid && itemForm.touched) { <p class="d-field-error" role="alert">{{ text.invalid }}</p> }
+      <div class="actions"><button dButton variant="secondary" type="button" [disabled]="actionState.busy()" (click)="editor.close()">{{ text.cancel }}</button><button dButton type="submit" [disabled]="actionState.busy()">{{ selected() ? text.save : text.create }}</button></div>
+    </form>
+  }
+</app-dialog>
+<app-dialog #lossEditor [title]="text.register" [closeLabel]="text.close" [busy]="actionState.busy()">
+  <app-form-feedback id="loss-feedback" [state]="actionState" [english]="locale === 'en'" />
+  @if (ready()) {
+    <p class="hint" id="loss-hint">{{ text.lossHint }}</p>
+    @if (!options().length) { <p class="hint">{{ text.noItems }}</p> }
+    <form [formGroup]="lossForm" (ngSubmit)="saveLoss()" [attr.aria-busy]="actionState.busy()">
+      <fieldset [disabled]="actionState.busy()">
+        <label class="d-field" for="loss-ingredient">{{ text.ingredient }}<select class="d-select" id="loss-ingredient" name="inventory_item_id" formControlName="inventory_item_id" required aria-describedby="loss-hint loss-feedback" [attr.aria-invalid]="lossForm.controls.inventory_item_id.invalid && lossForm.controls.inventory_item_id.touched || !!actionState.error()?.fields?.['inventory_item_id']"><option value="">{{ text.select }}</option>@for (item of options(); track item.id) { <option [value]="item.id">{{ item.name }} · #{{ item.id }} · {{ item.current_stock }} {{ item.unit }}</option> }</select></label>
+        <label class="d-field" for="loss-quantity">{{ text.quantity }}<input class="d-input" id="loss-quantity" name="quantity" formControlName="quantity" required inputmode="decimal" aria-describedby="quantity-hint loss-feedback" [attr.aria-invalid]="lossForm.controls.quantity.invalid && lossForm.controls.quantity.touched || !!actionState.error()?.fields?.['quantity']"></label>
+        <small class="hint" id="quantity-hint">{{ text.quantityHint }}</small>
+        <label class="d-field" for="loss-reason">{{ text.reason }}<textarea class="d-input" id="loss-reason" name="reason" formControlName="reason" required rows="3" aria-describedby="reason-hint loss-feedback" [attr.aria-invalid]="lossForm.controls.reason.invalid && lossForm.controls.reason.touched || !!actionState.error()?.fields?.['reason']"></textarea></label>
+        <small class="hint" id="reason-hint">{{ text.reasonHint }}</small>
+      </fieldset>
+      @if (lossForm.invalid && lossForm.touched) { <p class="d-field-error" role="alert">{{ text.invalid }}</p> }
+      <div class="actions"><button dButton variant="secondary" type="button" [disabled]="actionState.busy()" (click)="lossEditor.close()">{{ text.cancel }}</button><button dButton type="submit" [disabled]="actionState.busy() || !options().length">{{ text.confirmLoss }}</button></div>
+    </form>
+  }
+</app-dialog>
+<app-dialog #details [title]="text.losses" [closeLabel]="text.close" [busy]="actionState.busy()">
+  <app-form-feedback [state]="actionState" [english]="locale === 'en'" />
+  @if (lossDetail(); as loss) { <dl><dt>{{ text.ingredient }}</dt><dd>{{ ingredientName(loss.inventory_item_id) }}</dd><dt>{{ text.quantity }}</dt><dd>{{ loss.quantity }}</dd><dt>{{ text.reason }}</dt><dd>{{ loss.reason }}</dd><dt>{{ text.employee }}</dt><dd>#{{ loss.registered_by_employee_id }}</dd><dt>{{ text.date }}</dt><dd>{{ date(loss.created_at) }}</dd></dl> }
+</app-dialog>
+<app-dialog #confirmation [title]="text.deleteQuestion" [closeLabel]="text.close" [busy]="actionState.busy()"><p class="record-name">{{ selected()?.name }}</p><p class="hint">{{ text.deleteHint }}</p><app-form-feedback [state]="actionState" [english]="locale === 'en'" /><div class="actions"><button dButton variant="secondary" type="button" [disabled]="actionState.busy()" (click)="confirmation.close()">{{ text.cancel }}</button><button dButton variant="danger" type="button" [disabled]="actionState.busy()" (click)="remove()">{{ text.confirmDelete }}</button></div></app-dialog>
