@@ -10,8 +10,8 @@ export const adminNavigation: NavigationItem[] = [
   { label: { es: 'Catálogo', en: 'Catalog' }, icon: 'percent', route: '/admin/catalog', exact: false },
   { label: { es: 'Inventario', en: 'Inventory' }, icon: 'package', route: '/admin/inventory', exact: false },
   { label: { es: 'Empleados', en: 'Employees' }, icon: 'chef-hat', route: '/admin/employees' },
-  { label: { es: 'Clientes', en: 'Customers' }, icon: 'users' },
-  { label: { es: 'Promociones', en: 'Promotions' }, icon: 'tag' },
+  { label: { es: 'Clientes', en: 'Customers' }, icon: 'users', route: '/admin/customers' },
+  { label: { es: 'Promociones', en: 'Promotions' }, icon: 'tag', route: '/admin/promotions' },
   { label: { es: 'Reportes', en: 'Reports' }, icon: 'chart-no-axes-combined' },
   { label: { es: 'Configuración', en: 'Settings' }, icon: 'settings', route: '/admin/settings' },
 ];
