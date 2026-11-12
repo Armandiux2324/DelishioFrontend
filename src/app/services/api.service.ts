@@ -1,3 +1,4 @@
+import { RestaurantSettings, RestaurantSettingsValues } from './restaurant-settings.models';
 import { inject, Injectable } from '@angular/core';
 import axios, { AxiosRequestConfig } from 'axios';
 import { environment } from '../../environments/environment';
@@ -57,6 +58,14 @@ export class ApiService {
 
   setTwoFactor(enabled: boolean, password: string) {
     return this.client.post<ApiMessage>('/auth/2fa/' + (enabled ? 'enable' : 'disable'), { password }, this.auth());
+  }
+
+  getRestaurantSettings() {
+    return this.client.get<{ data: RestaurantSettings }>('/admin/restaurant/configuration', this.auth());
+  }
+
+  updateRestaurantSettings(payload: Partial<RestaurantSettingsValues>) {
+    return this.client.patch<{ data: RestaurantSettings }>('/admin/restaurant/configuration', payload, this.auth());
   }
 
   getRestaurants(page = 1) {

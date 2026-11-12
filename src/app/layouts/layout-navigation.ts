@@ -13,7 +13,7 @@ export const adminNavigation: NavigationItem[] = [
   { label: { es: 'Clientes', en: 'Customers' }, icon: 'users' },
   { label: { es: 'Promociones', en: 'Promotions' }, icon: 'tag' },
   { label: { es: 'Reportes', en: 'Reports' }, icon: 'chart-no-axes-combined' },
-  { label: { es: 'Configuración', en: 'Settings' }, icon: 'settings' },
+  { label: { es: 'Configuración', en: 'Settings' }, icon: 'settings', route: '/admin/settings' },
 ];
 
 export const customerNavigation: NavigationItem[] = [

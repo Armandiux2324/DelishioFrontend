@@ -160,4 +160,17 @@ describe('ApiService using Axios', () => {
     expect(JSON.parse(calls[3].data)).toEqual(payload);
     for (const config of calls) expect(config.headers.get('Authorization')).toBe('Bearer token');
   });
+
+  it('reads and PATCHes the authenticated restaurant configuration without tenant identifiers', async () => {
+    await api.getRestaurantSettings();
+    await api.updateRestaurantSettings({ timezone: 'America/New_York', dual_pricing_enabled: true, dual_pricing_percentage: '3.50' });
+    const calls = adapter.calls.allArgs().map(([config]) => config);
+    expect(calls.map(config => config.url)).toEqual(['/admin/restaurant/configuration', '/admin/restaurant/configuration']);
+    expect(calls.map(config => config.method)).toEqual(['get', 'patch']);
+    expect(JSON.parse(calls[1].data)).toEqual({ timezone: 'America/New_York', dual_pricing_enabled: true, dual_pricing_percentage: '3.50' });
+    for (const config of calls) {
+      expect(config.headers.get('Authorization')).toBe('Bearer token');
+      expect(config.params).toBeUndefined();
+    }
+  });
 });
