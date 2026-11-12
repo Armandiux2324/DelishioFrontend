@@ -1,0 +1,12 @@
+:host { display: block; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1rem; }
+strong, span { display: block; }
+button { font: inherit; color: #007aff; background: transparent; border: 1px solid currentColor; border-radius: .75rem; padding: .5rem .8rem; cursor: pointer; }
+button:disabled { opacity: .5; cursor: default; }
+p { margin: 0 1rem; color: #b91c1c; }
+@media (prefers-color-scheme: dark) {
+  :host { color: #f5f5f7; }
+  button { color: #78b4ff; }
+  p { color: #ff9da1; }
+}
+@media print { :host { display: none; } }

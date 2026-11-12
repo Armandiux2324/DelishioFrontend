@@ -1,0 +1,11 @@
+@let english = session.user?.locale === 'en';
+<header>
+  <div><strong>Delishio</strong><span>{{ area }}</span></div>
+  <span>{{ (session.session$ | async)?.user?.name }}</span>
+  <button type="button" [disabled]="busy()" (click)="logout()">
+    {{ english ? 'Sign out' : 'Cerrar sesión' }}
+  </button>
+</header>
+@if (failed()) {
+  <p role="alert">{{ english ? 'Unable to sign out. Try again.' : 'No se pudo cerrar la sesión. Inténtalo de nuevo.' }}</p>
+}

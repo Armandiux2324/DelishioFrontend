@@ -2,9 +2,22 @@
 
 ## Precuenta del Mesero
 
-Inicia el backend en `http://127.0.0.1:8000` y ejecuta `npm ci` y `npm start` en este repositorio. Abre `/mesero`, inicia sesión con una cuenta de mesero y elige **Generar precuenta** en una orden confirmada con caja abierta. **Imprimir precuenta** abre el diálogo del navegador.
+Inicia el backend en `http://127.0.0.1:8000` y ejecuta `npm ci` y `npm start` en este repositorio. Abre `/login`, inicia sesión con una cuenta de mesero y elige **Generar precuenta** en una orden confirmada con caja abierta. **Imprimir precuenta** abre el diálogo del navegador.
 
 El proxy de desarrollo reenvía `/api` al backend. Para producción, publica el frontend y enruta `/api` al backend en el mismo origen.
+
+## Estructura del frontend
+
+La aplicación usa NgModules y Axios. `AppRoutingModule` carga cada área bajo demanda.
+
+- `pages/` contiene `auth`, `super-admin`, `admin`, `waiter`, `chef` y `customer`.
+- `layouts/` contiene los contenedores de navegación de cada área.
+- `services/api.service.ts` concentra las llamadas HTTP y agrega el token desde `SessionService`.
+- `SessionService` publica los cambios de sesión y guarda solo el token en `sessionStorage`. Al recargar una ruta protegida, el guard consulta `GET /api/v1/user` antes de permitir el acceso.
+- `guards/` verifica sesión y rol. `shared/` reúne componentes reutilizables.
+- `environments/` define la URL de la API. La compilación de producción reemplaza `environment.ts` por `environment.prod.ts`. Ambos usan `/api/v1` con la configuración actual.
+
+El login maneja usuario/contraseña y OTP cuando el backend solicita 2FA. Redirige a `/super-admin`, `/admin`, `/mesero`, `/chef` o `/cliente` según el usuario validado. La precuenta es la página funcional de Mesero. Las demás áreas contienen el layout base para incorporar sus páginas.
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
 
