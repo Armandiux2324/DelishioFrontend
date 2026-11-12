@@ -1,3 +1,4 @@
+import { CashMovement, CashMovementPayload, CashRegister, OperationsPage, WorkShift } from './operations.models';
 import { AdminCustomer, AdminPage, Promotion, PromotionPayload } from './customer-promotion.models';
 import { Employee, EmployeeCreate, EmployeeCreated, EmployeePage, EmployeeUpdate } from './employee.models';
 import { MenuItem, MenuItemPayload, MenuItemsPage } from './menu-item.models';
@@ -113,6 +114,17 @@ export class ApiService {
   createPromotion(payload: PromotionPayload) { return this.client.post<{data:Promotion}>('/admin/promotions', payload, this.auth()); }
   updatePromotion(id: number, payload: Partial<PromotionPayload>) { return this.client.put<{data:Promotion}>('/admin/promotions/' + id, payload, this.auth()); }
   deletePromotion(id: number) { return this.client.delete<void>('/admin/promotions/' + id, this.auth()); }
+
+  getWorkShifts(page = 1) { return this.client.get<OperationsPage<WorkShift>>('/work-shifts', { ...this.auth(), params: { page } }); }
+  clockIn() { return this.client.post<{data:WorkShift}>('/work-shifts', {}, this.auth()); }
+  clockOut(id: number) { return this.client.post<{data:WorkShift}>('/work-shifts/' + id + '/clock-out', {}, this.auth()); }
+  getCashRegisters(page = 1) { return this.client.get<OperationsPage<CashRegister>>('/cash-registers', { ...this.auth(), params: { page } }); }
+  getCashRegister(id: number) { return this.client.get<{data:CashRegister}>('/cash-registers/' + id, this.auth()); }
+  openCashRegister(opening_amount: string) { return this.client.post<{data:CashRegister}>('/cash-registers', {opening_amount}, this.auth()); }
+  closeCashRegister(id: number, counted_cash: string) { return this.client.post<{data:CashRegister}>('/cash-registers/' + id + '/close', {counted_cash}, this.auth()); }
+  getCashMovements(page = 1) { return this.client.get<OperationsPage<CashMovement>>('/admin/cash-movements', { ...this.auth(), params: { page } }); }
+  getCashMovement(id: number) { return this.client.get<{data:CashMovement}>('/admin/cash-movements/' + id, this.auth()); }
+  createCashMovement(payload: CashMovementPayload) { return this.client.post<{data:CashMovement}>('/admin/cash-movements', payload, this.auth()); }
 
   getRestaurantSettings() {
     return this.client.get<{ data: RestaurantSettings }>('/admin/restaurant/configuration', this.auth());

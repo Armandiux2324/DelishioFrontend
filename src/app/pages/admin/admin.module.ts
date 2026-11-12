@@ -1,3 +1,7 @@
+import { OperationsModule } from '../operations/operations.module';
+import { ShiftsComponent } from '../operations/shifts.component';
+import { CashRegistersComponent } from '../operations/cash-registers.component';
+import { CashMovementsComponent } from '../operations/cash-movements.component';
 import { CustomersComponent } from './customers/customers.component';
 import { PromotionsComponent } from './promotions/promotions.component';
 import { EmployeesComponent } from './employees/employees.component';
@@ -15,12 +19,18 @@ import { SharedModule } from '../../shared/shared.module';
 @NgModule({
   declarations: [AdminLayoutComponent, SettingsComponent, CatalogComponent, InventoryComponent, MenuComponent, EmployeesComponent, CustomersComponent, PromotionsComponent],
   imports: [
-    CommonModule, SharedModule, ReactiveFormsModule,
+    CommonModule, SharedModule, OperationsModule, ReactiveFormsModule,
     RouterModule.forChild([{
       path: '',
       component: AdminLayoutComponent,
       children: [
         { path: 'settings', component: SettingsComponent },
+        { path: 'shifts', component: ShiftsComponent },
+        { path: 'cash', children: [
+          { path: '', pathMatch: 'full', redirectTo: 'registers' },
+          { path: 'registers', component: CashRegistersComponent },
+          { path: 'movements', component: CashMovementsComponent },
+        ] },
         { path: 'customers', component: CustomersComponent },
         { path: 'promotions', component: PromotionsComponent },
         { path: 'employees', component: EmployeesComponent },
