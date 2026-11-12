@@ -102,4 +102,20 @@ describe('Visual foundations', () => {
     expect(icons.length).toBe(1);
     expect(icons[0].getAttribute('aria-hidden')).toBe('true');
   });
+
+  it('prevents dismissing a dialog while its operation is pending', () => {
+    const component = fixture.componentInstance.dialog;
+    component.busy = true;
+    component.open();
+    fixture.detectChanges();
+    const dialog = view.querySelector<HTMLDialogElement>('dialog')!;
+    expect(dialog.querySelector<HTMLButtonElement>('button')!.disabled).toBeTrue();
+    const cancel = new Event('cancel', { cancelable: true });
+    dialog.dispatchEvent(cancel);
+    expect(cancel.defaultPrevented).toBeTrue();
+    dialog.click();
+    expect(dialog.open).toBeTrue();
+    component.close();
+    expect(dialog.open).toBeFalse();
+  });
 });

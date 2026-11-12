@@ -1,9 +1,9 @@
 <dialog #dialog [id]="id" [attr.data-kind]="kind" [attr.aria-labelledby]="id + '-title'"
-  (click)="backdrop($event)" (close)="afterClose()">
+  [attr.aria-busy]="busy" (click)="backdrop($event)" (cancel)="cancel($event)" (close)="afterClose()">
   <div class="body">
     <header>
       <h2 [id]="id + '-title'">{{ title }}</h2>
-      <button dButton variant="ghost" type="button" [attr.aria-label]="closeLabel" (click)="close()">
+      <button dButton variant="ghost" type="button" [disabled]="busy" [attr.aria-label]="closeLabel" (click)="close()">
         <svg lucideIcon="x" [size]="20" aria-hidden="true" ></svg>
       </button>
     </header>

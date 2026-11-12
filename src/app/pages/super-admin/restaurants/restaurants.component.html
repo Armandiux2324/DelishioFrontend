@@ -1,0 +1,131 @@
+<app-page-heading [title]="text.title" [subtitle]="text.subtitle">
+  <button dButton variant="secondary" type="button" [disabled]="busy()" (click)="loadPage(pagination().current_page)">{{ text.refresh }}</button>
+  <button #newRestaurant dButton type="button" [disabled]="busy()" (click)="openEditor()"><span aria-hidden="true">+</span> {{ text.create }}</button>
+</app-page-heading>
+@if (notice()) { <p class="notice" role="status">{{ notice() }}</p> }
+<app-form-feedback [state]="listState" [english]="locale === 'en'" />
+@if (!listState.busy() && !listState.error()) {
+  <app-panel>
+    @if (restaurants().length) {
+      <div class="d-table-wrap table-scroll" tabindex="0" [attr.aria-label]="text.title">
+        <table class="d-table">
+          <caption class="d-visually-hidden">{{ text.title }}</caption>
+          <thead><tr>
+            <th scope="col">{{ text.restaurant }}</th><th scope="col">{{ text.phone }}</th>
+            <th scope="col">{{ text.schedule }}</th><th scope="col">{{ text.status }}</th><th scope="col"><span class="d-visually-hidden">{{ text.view }}</span></th>
+          </tr></thead>
+          <tbody>
+            @for (restaurant of restaurants(); track restaurant.id) {
+              <tr>
+                <td><strong>{{ restaurant.name }}</strong><span class="muted address">{{ restaurant.address ?? text.missing }}</span></td>
+                <td>{{ restaurant.phone ?? text.missing }}</td>
+                <td>{{ restaurant.schedule ?? text.missing }}</td>
+                <td><span class="d-badge" [attr.data-status]="restaurant.status">{{ text[restaurant.status] }}</span></td>
+                <td><button dButton variant="ghost" class="detail-link" type="button" [attr.aria-label]="text.view + ' — ' + restaurant.name" [disabled]="busy()" (click)="showDetails(restaurant)">{{ text.view }} <span aria-hidden="true">→</span></button></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <footer class="pagination">
+        <span>{{ pagination().total }} {{ text.total }} · {{ text.page }} {{ pagination().current_page }} {{ text.of }} {{ pagination().last_page }}</span>
+        <nav [attr.aria-label]="text.page">
+          <button dButton variant="secondary" type="button" [disabled]="busy() || pagination().current_page <= 1" (click)="loadPage(pagination().current_page - 1)">{{ text.previous }}</button>
+          <button dButton variant="secondary" type="button" [disabled]="busy() || pagination().current_page >= pagination().last_page" (click)="loadPage(pagination().current_page + 1)">{{ text.next }}</button>
+        </nav>
+      </footer>
+    } @else {
+      <app-feedback [title]="text.empty" [message]="text.emptyHint" />
+    }
+  </app-panel>
+}
+
+<app-dialog #details [title]="text.detail" [closeLabel]="text.close" [busy]="detailState.busy()">
+  <app-form-feedback [state]="detailState" [english]="locale === 'en'" />
+  @if (selected(); as restaurant) {
+    <section class="restaurant-detail">
+      <div class="detail-title"><h3>{{ restaurant.name }}</h3><span class="d-badge" [attr.data-status]="restaurant.status">{{ text[restaurant.status] }}</span></div>
+      <dl>
+        <div><dt>{{ text.address }}</dt><dd>{{ restaurant.address ?? text.missing }}</dd></div>
+        <div><dt>{{ text.phone }}</dt><dd>{{ restaurant.phone ?? text.missing }}</dd></div>
+        <div><dt>{{ text.schedule }}</dt><dd>{{ restaurant.schedule ?? text.missing }}</dd></div>
+        <div><dt>{{ text.description }}</dt><dd>{{ restaurant.description ?? text.missing }}</dd></div>
+        <div><dt>{{ text.currency }}</dt><dd>{{ restaurant.currency }}</dd></div>
+        <div><dt>{{ text.logo }}</dt><dd>{{ restaurant.logo_url ?? text.missing }}</dd></div>
+        <div><dt>{{ text.stripe }}</dt><dd>{{ restaurant.stripe_account_id ?? text.missing }}</dd></div>
+        <div><dt>{{ text.createdAt }}</dt><dd>{{ createdAt(restaurant.created_at) }}</dd></div>
+      </dl>
+      <div class="actions">
+        <button dButton type="button" [disabled]="busy()" (click)="openEditor(restaurant)">{{ text.edit }}</button>
+        <button dButton variant="secondary" type="button" [disabled]="busy()" (click)="prepareAction(restaurant.status === 'active' ? 'suspend' : 'activate')">{{ restaurant.status === 'active' ? text.suspend : text.activate }}</button>
+        <button dButton variant="danger" type="button" [disabled]="busy()" (click)="prepareAction('delete')">{{ text.delete }}</button>
+      </div>
+    </section>
+  }
+</app-dialog>
+
+<app-dialog #editor [title]="editing() ? text.edit : text.create" [closeLabel]="text.close" [busy]="formState.busy()" (closed)="clearPasswords()">
+  <app-form-feedback id="restaurant-form-feedback" [state]="formState" [english]="locale === 'en'" />
+  <form [formGroup]="form" (ngSubmit)="save()" [attr.aria-busy]="formState.busy()">
+    <label class="d-field" for="restaurant-name">{{ text.name }}
+      <input class="d-input" id="restaurant-name" name="name" type="text" formControlName="name" required maxlength="255" autocomplete="organization"
+        [attr.aria-invalid]="(form.controls.name.invalid && form.controls.name.touched) || !!formState.error()?.fields?.['name']" aria-describedby="restaurant-form-feedback">
+    </label>
+    <label class="d-field" for="restaurant-address">{{ text.address }}
+      <input class="d-input" id="restaurant-address" name="address" type="text" formControlName="address" required maxlength="255" autocomplete="street-address"
+        [attr.aria-invalid]="(form.controls.address.invalid && form.controls.address.touched) || !!formState.error()?.fields?.['address']" aria-describedby="restaurant-form-feedback">
+    </label>
+    <label class="d-field" for="restaurant-phone">{{ text.phone }}
+      <input class="d-input" id="restaurant-phone" name="phone" type="tel" formControlName="phone" required maxlength="20" autocomplete="tel"
+        [attr.aria-invalid]="(form.controls.phone.invalid && form.controls.phone.touched) || !!formState.error()?.fields?.['phone']" aria-describedby="restaurant-form-feedback">
+    </label>
+    @if (editing()) {
+    <label class="d-field" for="restaurant-logo_url">{{ text.logo }} · {{ text.optional }}
+      <input class="d-input" id="restaurant-logo_url" name="logo_url" type="text" formControlName="logo_url" maxlength="255"
+        [attr.aria-invalid]="(form.controls.logo_url.invalid && form.controls.logo_url.touched) || !!formState.error()?.fields?.['logo_url']" aria-describedby="restaurant-form-feedback">
+    </label>
+    <label class="d-field" for="restaurant-stripe_account_id">{{ text.stripe }} · {{ text.optional }}
+      <input class="d-input" id="restaurant-stripe_account_id" name="stripe_account_id" type="text" formControlName="stripe_account_id" maxlength="255" autocapitalize="none" spellcheck="false"
+        [attr.aria-invalid]="(form.controls.stripe_account_id.invalid && form.controls.stripe_account_id.touched) || !!formState.error()?.fields?.['stripe_account_id']" aria-describedby="restaurant-form-feedback">
+    </label>
+      <small class="d-field-hint">{{ text.stripeHint }}</small>
+    } @else {
+      <fieldset><legend>{{ text.administrator }}</legend>
+        <p class="muted">{{ text.adminHint }}</p>
+    <label class="d-field" for="restaurant-admin_name">{{ text.adminName }}
+      <input class="d-input" id="restaurant-admin_name" name="admin_name" type="text" formControlName="admin_name" required maxlength="255" autocomplete="off"
+        [attr.aria-invalid]="(form.controls.admin_name.invalid && form.controls.admin_name.touched) || !!formState.error()?.fields?.['admin_name']" aria-describedby="restaurant-form-feedback">
+    </label>
+    <label class="d-field" for="restaurant-admin_email">{{ text.adminEmail }}
+      <input class="d-input" id="restaurant-admin_email" name="admin_email" type="email" formControlName="admin_email" required maxlength="255" autocomplete="off" autocapitalize="none"
+        [attr.aria-invalid]="(form.controls.admin_email.invalid && form.controls.admin_email.touched) || !!formState.error()?.fields?.['admin_email']" aria-describedby="restaurant-form-feedback">
+    </label>
+    <label class="d-field" for="restaurant-admin_password">{{ text.adminPassword }}
+      <input class="d-input" id="restaurant-admin_password" name="admin_password" type="password" formControlName="admin_password" required minlength="8" autocomplete="new-password"
+        [attr.aria-invalid]="(form.controls.admin_password.invalid && form.controls.admin_password.touched) || !!formState.error()?.fields?.['admin_password']" aria-describedby="restaurant-form-feedback">
+    </label>
+        <small class="d-field-hint">{{ text.passwordHint }}</small>
+    <label class="d-field" for="restaurant-admin_password_confirmation">{{ text.confirmPassword }}
+      <input class="d-input" id="restaurant-admin_password_confirmation" name="admin_password_confirmation" type="password" formControlName="admin_password_confirmation" required autocomplete="new-password"
+        [attr.aria-invalid]="(form.controls.admin_password_confirmation.invalid && form.controls.admin_password_confirmation.touched) || !!formState.error()?.fields?.['admin_password_confirmation']" aria-describedby="restaurant-form-feedback">
+    </label>
+      </fieldset>
+      @if (form.hasError('passwordMismatch') && form.controls.admin_password_confirmation.touched) { <p class="d-field-error" role="alert">{{ text.mismatch }}</p> }
+    }
+    @if (form.invalid && form.touched) { <p class="d-field-error" role="alert">{{ text.invalid }}</p> }
+    <div class="actions">
+      <button dButton variant="secondary" type="button" [disabled]="formState.busy()" (click)="editor.close()">{{ text.cancel }}</button>
+      <button dButton type="submit" [disabled]="formState.busy()">{{ editing() ? text.save : text.createAction }}</button>
+    </div>
+  </form>
+</app-dialog>
+
+<app-dialog #confirmation [title]="actionTitle()" [closeLabel]="text.close" [busy]="actionState.busy()">
+  <p class="confirmation-name">{{ selected()?.name }}</p>
+  <p class="muted">{{ actionHint() }}</p>
+  <app-form-feedback [state]="actionState" [english]="locale === 'en'" />
+  <div class="actions">
+    <button dButton variant="secondary" type="button" [disabled]="actionState.busy()" (click)="confirmation.close()">{{ text.cancel }}</button>
+    <button dButton [variant]="action() === 'activate' ? 'primary' : 'danger'" type="button" [disabled]="actionState.busy()" (click)="confirmAction()">{{ text.confirm }}</button>
+  </div>
+</app-dialog>

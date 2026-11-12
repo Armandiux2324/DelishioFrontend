@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import axios, { AxiosRequestConfig } from 'axios';
 import { environment } from '../../environments/environment';
 import { ApiMessage, LoginResult, OrdersPage, ProfilePayload, Quote, RegisterPayload, ResetPasswordPayload, Session, User } from './api.models';
+import { CreateRestaurantPayload, Restaurant, RestaurantPage, UpdateRestaurantPayload } from './restaurant.models';
 import { SessionService } from './session.service';
 
 @Injectable({ providedIn: 'root' })
@@ -56,6 +57,34 @@ export class ApiService {
 
   setTwoFactor(enabled: boolean, password: string) {
     return this.client.post<ApiMessage>('/auth/2fa/' + (enabled ? 'enable' : 'disable'), { password }, this.auth());
+  }
+
+  getRestaurants(page = 1) {
+    return this.client.get<RestaurantPage>('/auth/super-admin/restaurants', { ...this.auth(), params: { page } });
+  }
+
+  getRestaurant(id: number) {
+    return this.client.get<{ data: Restaurant }>('/auth/super-admin/restaurants/' + id, this.auth());
+  }
+
+  createRestaurant(payload: CreateRestaurantPayload) {
+    return this.client.post<{ data: Restaurant }>('/auth/super-admin/restaurants', payload, this.auth());
+  }
+
+  updateRestaurant(id: number, payload: UpdateRestaurantPayload) {
+    return this.client.put<{ data: Restaurant }>('/auth/super-admin/restaurants/' + id, payload, this.auth());
+  }
+
+  activateRestaurant(id: number) {
+    return this.client.post<{ data: Restaurant }>('/auth/super-admin/restaurants/' + id + '/activate', {}, this.auth());
+  }
+
+  suspendRestaurant(id: number) {
+    return this.client.post<{ data: Restaurant }>('/auth/super-admin/restaurants/' + id + '/suspend', {}, this.auth());
+  }
+
+  deleteRestaurant(id: number) {
+    return this.client.delete<ApiMessage>('/auth/super-admin/restaurants/' + id, this.auth());
   }
 
   getUser() {

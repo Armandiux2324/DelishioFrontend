@@ -17,8 +17,9 @@ describe('Delishio routing', () => {
 
   beforeEach(() => {
     sessionStorage.removeItem('delishio.access_token');
-    api = jasmine.createSpyObj<ApiService>('ApiService', ['getUser', 'getWaiterOrders']);
+    api = jasmine.createSpyObj<ApiService>('ApiService', ['getUser', 'getWaiterOrders', 'getRestaurants']);
     api.getUser.and.resolveTo({ data: waiter.user } as AxiosResponse);
+    api.getRestaurants.and.resolveTo({ data: { data: [], meta: { current_page: 1, last_page: 1, total: 0 } } } as never);
     api.getWaiterOrders.and.resolveTo({
       data: { data: [], meta: { current_page: 1, last_page: 1 } },
     } as AxiosResponse);
