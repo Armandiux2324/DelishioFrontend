@@ -1,3 +1,4 @@
+import { CatalogComponent } from './catalog/catalog.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SettingsComponent } from './settings/settings.component';
 import { CommonModule } from '@angular/common';
@@ -7,13 +8,19 @@ import { AdminLayoutComponent } from '../../layouts/admin-layout/admin-layout.co
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-  declarations: [AdminLayoutComponent, SettingsComponent],
+  declarations: [AdminLayoutComponent, SettingsComponent, CatalogComponent],
   imports: [
     CommonModule, SharedModule, ReactiveFormsModule,
     RouterModule.forChild([{
       path: '',
       component: AdminLayoutComponent,
-      children: [{ path: 'settings', component: SettingsComponent }],
+      children: [
+        { path: 'settings', component: SettingsComponent },
+        { path: 'catalog', pathMatch: 'full', redirectTo: 'catalog/tax-classes' },
+        ...(['tax-classes', 'super-categories', 'categories'] as const).map(kind => ({
+          path: 'catalog/' + kind, component: CatalogComponent, data: { catalogKind: kind },
+        })),
+      ],
     }]),
   ],
 })

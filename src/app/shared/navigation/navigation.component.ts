@@ -4,6 +4,7 @@ export interface NavigationItem {
   label: { es: string; en: string };
   icon: string;
   route?: string;
+  exact?: boolean;
 }
 
 @Component({

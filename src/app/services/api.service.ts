@@ -1,3 +1,4 @@
+import { CatalogKind, CatalogPage, CatalogPayloads, CatalogRecords } from './catalog.models';
 import { RestaurantSettings, RestaurantSettingsValues } from './restaurant-settings.models';
 import { inject, Injectable } from '@angular/core';
 import axios, { AxiosRequestConfig } from 'axios';
@@ -58,6 +59,26 @@ export class ApiService {
 
   setTwoFactor(enabled: boolean, password: string) {
     return this.client.post<ApiMessage>('/auth/2fa/' + (enabled ? 'enable' : 'disable'), { password }, this.auth());
+  }
+
+  getCatalog<K extends CatalogKind>(kind: K, page = 1) {
+    return this.client.get<CatalogPage<CatalogRecords[K]>>('/admin/' + kind, { ...this.auth(), params: { page } });
+  }
+
+  getCatalogRecord<K extends CatalogKind>(kind: K, id: number) {
+    return this.client.get<{ data: CatalogRecords[K] }>('/admin/' + kind + '/' + id, this.auth());
+  }
+
+  createCatalog<K extends CatalogKind>(kind: K, payload: CatalogPayloads[K]) {
+    return this.client.post<{ data: CatalogRecords[K] }>('/admin/' + kind, payload, this.auth());
+  }
+
+  updateCatalog<K extends CatalogKind>(kind: K, id: number, payload: CatalogPayloads[K]) {
+    return this.client.put<{ data: CatalogRecords[K] }>('/admin/' + kind + '/' + id, payload, this.auth());
+  }
+
+  deleteCatalog(kind: CatalogKind, id: number) {
+    return this.client.delete<void>('/admin/' + kind + '/' + id, this.auth());
   }
 
   getRestaurantSettings() {
