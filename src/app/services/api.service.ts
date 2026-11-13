@@ -1,3 +1,4 @@
+import { CreateWaiterOrder, OrderItemInput, WaiterOrder, WaiterOrdersPage } from './waiter-order.models';
 import { CashMovement, CashMovementPayload, CashRegister, OperationsPage, WorkShift } from './operations.models';
 import { AdminCustomer, AdminPage, Promotion, PromotionPayload } from './customer-promotion.models';
 import { Employee, EmployeeCreate, EmployeeCreated, EmployeePage, EmployeeUpdate } from './employee.models';
@@ -8,7 +9,7 @@ import { RestaurantSettings, RestaurantSettingsValues } from './restaurant-setti
 import { inject, Injectable } from '@angular/core';
 import axios, { AxiosRequestConfig } from 'axios';
 import { environment } from '../../environments/environment';
-import { ApiMessage, LoginResult, OrdersPage, ProfilePayload, Quote, RegisterPayload, ResetPasswordPayload, Session, User } from './api.models';
+import { ApiMessage, LoginResult, ProfilePayload, Quote, RegisterPayload, ResetPasswordPayload, Session, User } from './api.models';
 import { CreateRestaurantPayload, Restaurant, RestaurantPage, UpdateRestaurantPayload } from './restaurant.models';
 import { SessionService } from './session.service';
 
@@ -126,6 +127,14 @@ export class ApiService {
   getCashMovement(id: number) { return this.client.get<{data:CashMovement}>('/admin/cash-movements/' + id, this.auth()); }
   createCashMovement(payload: CashMovementPayload) { return this.client.post<{data:CashMovement}>('/admin/cash-movements', payload, this.auth()); }
 
+  getWaiterOrder(id: number) { return this.client.get<{data:WaiterOrder}>('/waiter/orders/' + id, this.auth()); }
+  createWaiterOrder(payload: CreateWaiterOrder) { return this.client.post<{data:WaiterOrder}>('/waiter/orders', payload, this.auth()); }
+  getWaiterMenu(page = 1) { return this.client.get<CatalogPage<MenuItem>>('/waiter/menu-items', { ...this.auth(), params: { page } }); }
+  addWaiterOrderItem(orderId: number, payload: OrderItemInput) { return this.client.post<{data:WaiterOrder}>('/waiter/orders/' + orderId + '/items', payload, this.auth()); }
+  updateWaiterOrderItem(orderId: number, itemId: number, payload: Omit<OrderItemInput,'menu_item_id'>) { return this.client.patch<{data:WaiterOrder}>('/waiter/orders/' + orderId + '/items/' + itemId, payload, this.auth()); }
+  removeWaiterOrderItem(orderId: number, itemId: number) { return this.client.delete<void>('/waiter/orders/' + orderId + '/items/' + itemId, this.auth()); }
+  confirmWaiterOrder(orderId: number) { return this.client.post<{data:WaiterOrder}>('/waiter/orders/' + orderId + '/confirm', {}, this.auth()); }
+
   getRestaurantSettings() {
     return this.client.get<{ data: RestaurantSettings }>('/admin/restaurant/configuration', this.auth());
   }
@@ -171,7 +180,7 @@ export class ApiService {
   }
 
   getWaiterOrders(page: number) {
-    return this.client.get<OrdersPage>('/waiter/orders', { ...this.auth(), params: { page } });
+    return this.client.get<WaiterOrdersPage>('/waiter/orders', { ...this.auth(), params: { page } });
   }
 
   getCheckoutPreview(orderId: number) {

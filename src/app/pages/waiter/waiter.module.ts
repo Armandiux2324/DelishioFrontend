@@ -1,3 +1,5 @@
+import { ReactiveFormsModule } from '@angular/forms';
+import { OrdersComponent } from './orders/orders.component';
 import { OperationsModule } from '../operations/operations.module';
 import { ShiftsComponent } from '../operations/shifts.component';
 import { CashRegistersComponent } from '../operations/cash-registers.component';
@@ -10,13 +12,13 @@ import { SharedModule } from '../../shared/shared.module';
 import { PrebillComponent } from './prebill.component';
 
 @NgModule({
-  declarations: [WaiterLayoutComponent, PrebillComponent],
+  declarations: [WaiterLayoutComponent, PrebillComponent, OrdersComponent],
   imports: [
-    CommonModule, SharedModule, OperationsModule, FormsModule,
+    CommonModule, SharedModule, OperationsModule, FormsModule, ReactiveFormsModule,
     RouterModule.forChild([{
       path: '',
       component: WaiterLayoutComponent,
-      children: [{ path: '', component: PrebillComponent }, { path: 'shifts', component: ShiftsComponent }, { path: 'cash', component: CashRegistersComponent }],
+      children: [{ path: '', component: PrebillComponent }, { path: 'orders', component: OrdersComponent }, { path: 'shifts', component: ShiftsComponent }, { path: 'cash', component: CashRegistersComponent }],
     }]),
   ],
 })
