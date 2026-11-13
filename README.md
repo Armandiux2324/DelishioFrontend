@@ -170,3 +170,7 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Órdenes del Mesero (8a)
+
+En `/mesero/orders`, el Mesero consulta sus órdenes, crea borradores para comer aquí, para llevar o a domicilio, agrega/edita/elimina partidas y confirma. Requiere una caja abierta. Precios, estación, impuestos, totales e inventario los determina Laravel; la confirmación consume existencias y bloquea la edición del borrador. La precuenta conserva `/mesero`. Los errores del backend permanecen visibles sin perder los campos ingresados.
