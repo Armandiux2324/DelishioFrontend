@@ -1,3 +1,4 @@
+import {DiscountInput,ExemptionInput,CancellationInput} from './waiter-order.models';
 import { CreateWaiterOrder, OrderItemInput, WaiterOrder, WaiterOrdersPage } from './waiter-order.models';
 import { CashMovement, CashMovementPayload, CashRegister, OperationsPage, WorkShift } from './operations.models';
 import { AdminCustomer, AdminPage, Promotion, PromotionPayload } from './customer-promotion.models';
@@ -127,6 +128,11 @@ export class ApiService {
   getCashMovement(id: number) { return this.client.get<{data:CashMovement}>('/admin/cash-movements/' + id, this.auth()); }
   createCashMovement(payload: CashMovementPayload) { return this.client.post<{data:CashMovement}>('/admin/cash-movements', payload, this.auth()); }
 
+  discountWaiterOrder(id:number,payload:DiscountInput) { return this.client.post<{data:WaiterOrder}>('/waiter/orders/'+id+'/discounts',payload,this.auth()); }
+  courtesyWaiterOrder(id:number,pin:string) { return this.client.post<{data:WaiterOrder}>('/waiter/orders/'+id+'/courtesies',{pin},this.auth()); }
+  exemptWaiterOrder(id:number,payload:ExemptionInput) { return this.client.post<{data:WaiterOrder}>('/waiter/orders/'+id+'/tax-exemptions',payload,this.auth()); }
+  cancelWaiterOrder(id:number,payload:CancellationInput) { return this.client.post<{data:WaiterOrder}>('/waiter/orders/'+id+'/cancel',payload,this.auth()); }
+  cancelWaiterOrderItem(id:number,itemId:number,payload:CancellationInput) { return this.client.post<{data:WaiterOrder}>('/waiter/orders/'+id+'/items/'+itemId+'/cancel',payload,this.auth()); }
   getWaiterOrder(id: number) { return this.client.get<{data:WaiterOrder}>('/waiter/orders/' + id, this.auth()); }
   createWaiterOrder(payload: CreateWaiterOrder) { return this.client.post<{data:WaiterOrder}>('/waiter/orders', payload, this.auth()); }
   getWaiterMenu(page = 1) { return this.client.get<CatalogPage<MenuItem>>('/waiter/menu-items', { ...this.auth(), params: { page } }); }
