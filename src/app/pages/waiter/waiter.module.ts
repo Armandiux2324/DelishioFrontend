@@ -1,3 +1,5 @@
+import '@angular/common/locales/global/es';
+import { CheckoutComponent } from './orders/checkout.component';
 import { AdjustmentsComponent } from './orders/adjustments.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { OrdersComponent } from './orders/orders.component';
@@ -13,7 +15,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { PrebillComponent } from './prebill.component';
 
 @NgModule({
-  declarations: [WaiterLayoutComponent, PrebillComponent, OrdersComponent, AdjustmentsComponent],
+  declarations: [WaiterLayoutComponent, PrebillComponent, OrdersComponent, AdjustmentsComponent, CheckoutComponent],
   imports: [
     CommonModule, SharedModule, OperationsModule, FormsModule, ReactiveFormsModule,
     RouterModule.forChild([{
