@@ -174,3 +174,7 @@ For more information on using the Angular CLI, including detailed command refere
 ## Órdenes del Mesero (8a)
 
 En `/mesero/orders`, el Mesero consulta sus órdenes, crea borradores para comer aquí, para llevar o a domicilio, agrega/edita/elimina partidas y confirma. Requiere una caja abierta. Precios, estación, impuestos, totales e inventario los determina Laravel; la confirmación consume existencias y bloquea la edición del borrador. La precuenta conserva `/mesero`. Los errores del backend permanecen visibles sin perder los campos ingresados.
+
+## Ajustes de órdenes del Mesero (8b)
+
+Desde el detalle de `/mesero/orders` se aplican descuentos por porcentaje o monto a toda la orden o una partida, cortesías a toda la orden, exenciones con motivo y cancelaciones de orden o partida. Se requiere PIN para descuentos, cortesías y cancelaciones de órdenes enviadas; las exenciones y cancelaciones de borradores no lo piden. Descuentos y cortesías requieren turno abierto y respetan los límites de configuración. El PIN se elimina del formulario tras cada intento enviado y al cerrar el diálogo; los errores de autorización y bloqueo temporal permanecen visibles. Totales e identidades de auditoría proceden del backend. Las cancelaciones no reintegran automáticamente el inventario consumido.

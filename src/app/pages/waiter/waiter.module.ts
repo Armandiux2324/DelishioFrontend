@@ -1,3 +1,4 @@
+import { AdjustmentsComponent } from './orders/adjustments.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { OrdersComponent } from './orders/orders.component';
 import { OperationsModule } from '../operations/operations.module';
@@ -12,7 +13,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { PrebillComponent } from './prebill.component';
 
 @NgModule({
-  declarations: [WaiterLayoutComponent, PrebillComponent, OrdersComponent],
+  declarations: [WaiterLayoutComponent, PrebillComponent, OrdersComponent, AdjustmentsComponent],
   imports: [
     CommonModule, SharedModule, OperationsModule, FormsModule, ReactiveFormsModule,
     RouterModule.forChild([{
