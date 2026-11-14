@@ -1,3 +1,4 @@
+import {CustomerPage,CustomerRestaurant,CustomerMenuItem,CustomerPromotion,CustomerOrder,CustomerOrderInput,CustomerPayment,CustomerBalancesPage} from './customer.models';
 import {ChefQueuePage,ChefQueueItem,PreparationStatus} from './chef-queue.models';
 import {CheckoutInput,CheckoutQuote} from './waiter-order.models';
 import {DiscountInput,ExemptionInput,CancellationInput} from './waiter-order.models';
@@ -140,6 +141,15 @@ export class ApiService {
   closeWaiterOrder(id:number,payload:CheckoutInput) { return this.client.post<{data:WaiterOrder}>('/waiter/orders/'+id+'/close',payload,this.auth()); }
   getChefQueue(page=1,status?:PreparationStatus) { return this.client.get<ChefQueuePage>('/chef/queue',{...this.auth(),params:{page,...(status?{status}:{})}}); }
   updateChefQueueItem(id:number,status:'in_preparation'|'ready') { return this.client.patch<{data:ChefQueueItem}>('/chef/queue/'+id,{status},this.auth()); }
+  getCustomerRestaurants(page=1){return this.client.get<CustomerPage<CustomerRestaurant>>('/customer/restaurants',{...this.auth(),params:{page}});}
+  getCustomerRestaurant(id:number){return this.client.get<{data:CustomerRestaurant}>('/customer/restaurants/'+id,this.auth());}
+  getCustomerMenu(id:number,page=1){return this.client.get<CustomerPage<CustomerMenuItem>>('/customer/restaurants/'+id+'/menu',{...this.auth(),params:{page}});}
+  getCustomerPromotions(id:number,page=1){return this.client.get<CustomerPage<CustomerPromotion>>('/customer/restaurants/'+id+'/promotions',{...this.auth(),params:{page}});}
+  createCustomerOrder(id:number,payload:CustomerOrderInput,key:string){return this.client.post<{data:CustomerOrder}>('/customer/restaurants/'+id+'/orders',payload,{headers:{...this.auth().headers,'Idempotency-Key':key}});}
+  getCustomerOrders(page=1){return this.client.get<CustomerPage<CustomerOrder>>('/customer/orders',{...this.auth(),params:{page}});}
+  getCustomerOrder(id:number){return this.client.get<{data:CustomerOrder}>('/customer/orders/'+id,this.auth());}
+  getCustomerPayment(id:number){return this.client.post<{data:CustomerPayment}>('/customer/orders/'+id+'/payment',{},this.auth());}
+  getCustomerBalances(page=1){return this.client.get<CustomerBalancesPage>('/customer/loyalty-balances',{...this.auth(),params:{page}});}
   getWaiterOrder(id: number) { return this.client.get<{data:WaiterOrder}>('/waiter/orders/' + id, this.auth()); }
   createWaiterOrder(payload: CreateWaiterOrder) { return this.client.post<{data:WaiterOrder}>('/waiter/orders', payload, this.auth()); }
   getWaiterMenu(page = 1) { return this.client.get<CatalogPage<MenuItem>>('/waiter/menu-items', { ...this.auth(), params: { page } }); }
