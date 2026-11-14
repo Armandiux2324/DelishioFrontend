@@ -9,7 +9,7 @@ export interface User {
   username?: string | null;
   two_factor_enabled?: boolean;
   customer?: { phone: string | null };
-  employee?: { role: 'admin' | 'waiter' | 'chef'; phone?: string | null; restaurant?: { name: string } };
+  employee?: { role: 'admin' | 'waiter' | 'chef'; station?: 'kitchen' | 'bar' | null; phone?: string | null; restaurant?: { name: string } };
 }
 export interface RegisterPayload {
   name: string;

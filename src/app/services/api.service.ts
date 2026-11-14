@@ -1,3 +1,4 @@
+import {ChefQueuePage,ChefQueueItem,PreparationStatus} from './chef-queue.models';
 import {CheckoutInput,CheckoutQuote} from './waiter-order.models';
 import {DiscountInput,ExemptionInput,CancellationInput} from './waiter-order.models';
 import { CreateWaiterOrder, OrderItemInput, WaiterOrder, WaiterOrdersPage } from './waiter-order.models';
@@ -137,6 +138,8 @@ export class ApiService {
   linkWaiterCustomer(id:number,qr_code:string) { return this.client.post<{data:WaiterOrder}>('/waiter/orders/'+id+'/customer',{qr_code},this.auth()); }
   previewWaiterCheckout(id:number,payload:CheckoutInput) { return this.client.post<{data:CheckoutQuote}>('/waiter/orders/'+id+'/checkout-preview',payload,this.auth()); }
   closeWaiterOrder(id:number,payload:CheckoutInput) { return this.client.post<{data:WaiterOrder}>('/waiter/orders/'+id+'/close',payload,this.auth()); }
+  getChefQueue(page=1,status?:PreparationStatus) { return this.client.get<ChefQueuePage>('/chef/queue',{...this.auth(),params:{page,...(status?{status}:{})}}); }
+  updateChefQueueItem(id:number,status:'in_preparation'|'ready') { return this.client.patch<{data:ChefQueueItem}>('/chef/queue/'+id,{status},this.auth()); }
   getWaiterOrder(id: number) { return this.client.get<{data:WaiterOrder}>('/waiter/orders/' + id, this.auth()); }
   createWaiterOrder(payload: CreateWaiterOrder) { return this.client.post<{data:WaiterOrder}>('/waiter/orders', payload, this.auth()); }
   getWaiterMenu(page = 1) { return this.client.get<CatalogPage<MenuItem>>('/waiter/menu-items', { ...this.auth(), params: { page } }); }

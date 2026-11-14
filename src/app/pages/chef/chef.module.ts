@@ -1,3 +1,4 @@
+import { QueueComponent } from './queue.component';
 import { OperationsModule } from '../operations/operations.module';
 import { ShiftsComponent } from '../operations/shifts.component';
 import { CommonModule } from '@angular/common';
@@ -7,13 +8,13 @@ import { ChefLayoutComponent } from '../../layouts/chef-layout/chef-layout.compo
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-  declarations: [ChefLayoutComponent],
+  declarations: [ChefLayoutComponent, QueueComponent],
   imports: [
     CommonModule, SharedModule, OperationsModule,
     RouterModule.forChild([{
       path: '',
       component: ChefLayoutComponent,
-      children: [{ path: 'shifts', component: ShiftsComponent }],
+      children: [{path:'',component:QueueComponent}, { path: 'shifts', component: ShiftsComponent }],
     }]),
   ],
 })

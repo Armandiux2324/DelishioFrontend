@@ -182,3 +182,9 @@ Desde el detalle de `/mesero/orders` se aplican descuentos por porcentaje o mont
 ## Cierre de cuenta del Mesero (8c)
 
 Desde el detalle de `/mesero/orders` se vincula el cliente mediante el UUID de su QR y se cobra una orden POS confirmada. Se admiten efectivo, transferencia y tarjeta, con propina y canje de puntos. Introduce montos base y usa “Asignar resto a tarjeta” para obtener el resto calculado por Laravel; el ajuste por tarjeta se muestra aparte y excluye la propina. La revisión muestra moneda, impuestos reducidos por canje y puntos sobre consumo neto. Cualquier edición invalida la cotización; solo se permite cerrar con diferencia cero. El servidor vuelve a validar y registra pagos y puntos. Los fallos de cierre no se reintentan automáticamente. El cierre registra el pago POS; no ejecuta un cargo en una terminal bancaria.
+
+## Cola del Chef (RFC)
+
+`/chef` muestra partidas confirmadas de la estación asignada al Chef (cocina o bar), con filtros en curso, pendiente, en preparación y listo. No envía una estación elegida por el cliente. Los botones avanzan únicamente pending → in_preparation → ready y respetan las validaciones de Laravel. Muestra cantidades, mesa/tipo de servicio, modificadores y notas de cocina.
+
+Consulta la página actual cada 5 segundos, sin superponer solicitudes; pausa al ocultar la pestaña y limpia el temporizador al salir. Si falla la consulta conserva las tarjetas y la última sincronización, avisa de datos desactualizados y bloquea cambios hasta recuperar la conexión. El modo TV es de solo lectura y rota grupos de hasta 4 tarjetas cada 15 segundos, pasando por las páginas del servidor. El modo táctil conserva controles grandes y paginación manual.
