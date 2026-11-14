@@ -5,6 +5,7 @@ export const superAdminNavigation: NavigationItem[] = [
 ];
 
 export const adminNavigation: NavigationItem[] = [
+  {label:{es:'Ventas externas',en:'External sales'},icon:'receipt-text',route:'/admin/external-sales'},
   { label: { es: 'Dashboard', en: 'Dashboard' }, icon: 'layout-dashboard', route: '/admin' },
   { label: { es: 'Turnos', en: 'Shifts' }, icon: 'clock-3', route: '/admin/shifts' },
   { label: { es: 'Caja', en: 'Cash register' }, icon: 'receipt-text', route: '/admin/cash', exact: false },

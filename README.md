@@ -198,3 +198,9 @@ El flujo usa el SDK oficial `@stripe/stripe-js` y Payment Element en la cuenta C
 Una creación con respuesta perdida se recupera con la misma clave Idempotency-Key y el mismo contenido; la solicitud pendiente se guarda por usuario/restaurante en sessionStorage (con respaldo en memoria cuando el navegador no permite almacenamiento). Historial y saldos se consultan con las rutas del Cliente, sin IDs de otros usuarios. El retorno bancario elimina los parámetros de pago de la URL y la aplicación omite el Referer para proteger esos datos. No se almacenan secretos de pago en el carrito.
 
 La validación local de integración utiliza Laravel con SQLite temporal y Stripe/SDK simulados; no demuestra cobros reales, 3DS bancario ni configuración productiva del webhook. Antes de producción hay que comprobar el flujo con las cuentas Connect y claves de prueba reales de Stripe.
+
+## Ventas por plataforma externa (RFPE-001)
+
+Administrador: `/admin/external-sales`. Mesero: `/mesero/external-sales`. Incluye listado paginado, detalle y registro; no ofrece edición ni eliminación porque la API no las permite. Plataformas: doordash, ubereats, didi y rappi. Captura total, comisión, fecha opcional y de 1 a 100 partidas con descripción, cantidad, precio unitario y vinculación opcional al menú. El neto y la identidad del empleado proceden de Laravel. La fecha se introduce en hora local del dispositivo y se envía como instante ISO; si se omite, la asigna el servidor.
+
+El total de la plataforma es independiente de la suma de partidas. Registrar estas ventas no genera cobros ni órdenes de cocina y no descuenta inventario. Ante un fallo de resultado incierto, el formulario bloquea el reenvío y ofrece revisar las ventas recientes; no hace reintentos automáticos. La API no dispone de clave de idempotencia para este registro.
