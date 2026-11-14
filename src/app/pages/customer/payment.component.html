@@ -1,0 +1,6 @@
+
+<app-form-feedback [state]="state" [english]="locale === 'en'" />@if (error()) {<p role="alert" class="d-field-error">{{ error() }}</p>}
+@if (order.status === 'open' && (waiting() || order.advance_payment?.status === 'authorized')) {<p role="status">{{ text.waiting }}</p>}
+@if (allowed() && !waiting()) {<p>{{ text.secure }}</p><p>{{ text.paymentHint }}</p><button dButton variant="secondary" type="button" [disabled]="state.busy()" (click)="prepare()">{{ text.resume }}</button>}
+<div #mount class="stripe-mount" [attr.aria-label]="text.secure"></div>
+@if (ready() && allowed() && !waiting()) {<button dButton type="button" [disabled]="state.busy()" (click)="confirm()">{{ text.authorize }}</button>}

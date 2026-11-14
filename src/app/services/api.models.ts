@@ -8,7 +8,7 @@ export interface User {
   email?: string;
   username?: string | null;
   two_factor_enabled?: boolean;
-  customer?: { phone: string | null };
+  customer?: { phone: string | null; qr_code?:string };
   employee?: { role: 'admin' | 'waiter' | 'chef'; station?: 'kitchen' | 'bar' | null; phone?: string | null; restaurant?: { name: string } };
 }
 export interface RegisterPayload {

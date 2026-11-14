@@ -20,6 +20,6 @@ export const adminNavigation: NavigationItem[] = [
 
 export const customerNavigation: NavigationItem[] = [
   { label: { es: 'Restaurantes', en: 'Restaurants' }, icon: 'building-2', route: '/cliente' },
-  { label: { es: 'Pedidos', en: 'Orders' }, icon: 'receipt-text' },
-  { label: { es: 'Puntos', en: 'Points' }, icon: 'gift' },
+  { label: { es: 'Pedidos', en: 'Orders' }, icon: 'receipt-text', route:'/cliente/orders',exact:false },
+  { label: { es: 'Puntos', en: 'Points' }, icon: 'gift', route:'/cliente/points' },
 ];
