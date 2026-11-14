@@ -1,3 +1,4 @@
+import {ExternalSalesComponent} from '../operations/external-sales.component';
 import '@angular/common/locales/global/es';
 import { CheckoutComponent } from './orders/checkout.component';
 import { AdjustmentsComponent } from './orders/adjustments.component';
@@ -21,7 +22,7 @@ import { PrebillComponent } from './prebill.component';
     RouterModule.forChild([{
       path: '',
       component: WaiterLayoutComponent,
-      children: [{ path: '', component: PrebillComponent }, { path: 'orders', component: OrdersComponent }, { path: 'shifts', component: ShiftsComponent }, { path: 'cash', component: CashRegistersComponent }],
+      children: [{path:'external-sales',component:ExternalSalesComponent}, { path: '', component: PrebillComponent }, { path: 'orders', component: OrdersComponent }, { path: 'shifts', component: ShiftsComponent }, { path: 'cash', component: CashRegistersComponent }],
     }]),
   ],
 })

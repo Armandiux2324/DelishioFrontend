@@ -1,3 +1,4 @@
+import {ExternalSalesComponent} from '../operations/external-sales.component';
 import { OperationsModule } from '../operations/operations.module';
 import { ShiftsComponent } from '../operations/shifts.component';
 import { CashRegistersComponent } from '../operations/cash-registers.component';
@@ -23,7 +24,7 @@ import { SharedModule } from '../../shared/shared.module';
     RouterModule.forChild([{
       path: '',
       component: AdminLayoutComponent,
-      children: [
+      children: [{path:'external-sales',component:ExternalSalesComponent},
         { path: 'settings', component: SettingsComponent },
         { path: 'shifts', component: ShiftsComponent },
         { path: 'cash', children: [
