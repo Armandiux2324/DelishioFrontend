@@ -1,3 +1,4 @@
+import {OrdersReportFilter,OrdersReportPage} from './orders-report.models';
 import {PaymentReportFilter,PaymentTransactionsData} from './payment-transactions.models';
 import {DashboardData,DashboardFilter} from './dashboard.models';
 import {ExternalSale,ExternalSaleInput,ExternalSalesPage} from './external-platform-sale.models';
@@ -159,6 +160,8 @@ export class ApiService {
   getAdminDashboard(filter:DashboardFilter){return this.client.get<{data:DashboardData}>('/admin/dashboard',{...this.auth(),params:filter});}
   getPaymentTransactionsReport(filter:PaymentReportFilter){return this.client.get<{data:PaymentTransactionsData}>('/admin/reports/payment-transactions',{...this.auth(),params:filter});}
   async exportPaymentTransactionsReport(filter:PaymentReportFilter){try{return await this.client.get<Blob>('/admin/reports/payment-transactions',{...this.auth(),params:{...filter,format:'xlsx'},responseType:'blob'});}catch(error){if(axios.isAxiosError(error)&&error.response?.data instanceof Blob){try{error.response.data=JSON.parse(await error.response.data.text());}catch{}}throw error;}}
+  getOrdersReport(filter:OrdersReportFilter,page=1){return this.client.get<OrdersReportPage>('/admin/reports/orders',{...this.auth(),params:{...filter,page}});}
+  async exportOrdersReport(filter:OrdersReportFilter){try{return await this.client.get<Blob>('/admin/reports/orders',{...this.auth(),params:{...filter,format:'xlsx'},responseType:'blob'});}catch(error){if(axios.isAxiosError(error)&&error.response?.data instanceof Blob){try{error.response.data=JSON.parse(await error.response.data.text());}catch{}}throw error;}}
   getWaiterOrder(id: number) { return this.client.get<{data:WaiterOrder}>('/waiter/orders/' + id, this.auth()); }
   createWaiterOrder(payload: CreateWaiterOrder) { return this.client.post<{data:WaiterOrder}>('/waiter/orders', payload, this.auth()); }
   getWaiterMenu(page = 1) { return this.client.get<CatalogPage<MenuItem>>('/waiter/menu-items', { ...this.auth(), params: { page } }); }

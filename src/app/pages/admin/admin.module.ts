@@ -1,3 +1,4 @@
+import {OrdersReportComponent} from './reports/orders-report.component';
 import {PaymentTransactionsComponent} from './reports/payment-transactions.component';
 import '@angular/common/locales/global/es';
 import {DashboardComponent} from './dashboard/dashboard.component';
@@ -21,13 +22,13 @@ import { AdminLayoutComponent } from '../../layouts/admin-layout/admin-layout.co
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-  declarations: [PaymentTransactionsComponent,DashboardComponent, AdminLayoutComponent, SettingsComponent, CatalogComponent, InventoryComponent, MenuComponent, EmployeesComponent, CustomersComponent, PromotionsComponent],
+  declarations: [OrdersReportComponent,PaymentTransactionsComponent,DashboardComponent, AdminLayoutComponent, SettingsComponent, CatalogComponent, InventoryComponent, MenuComponent, EmployeesComponent, CustomersComponent, PromotionsComponent],
   imports: [
     CommonModule, SharedModule, OperationsModule, ReactiveFormsModule,
     RouterModule.forChild([{
       path: '',
       component: AdminLayoutComponent,
-      children: [{path:'reports',pathMatch:'full',redirectTo:'reports/payment-transactions'},{path:'reports/payment-transactions',component:PaymentTransactionsComponent},{path:'',component:DashboardComponent},{path:'external-sales',component:ExternalSalesComponent},
+      children: [{path:'reports/orders',component:OrdersReportComponent},{path:'reports',pathMatch:'full',redirectTo:'reports/payment-transactions'},{path:'reports/payment-transactions',component:PaymentTransactionsComponent},{path:'',component:DashboardComponent},{path:'external-sales',component:ExternalSalesComponent},
         { path: 'settings', component: SettingsComponent },
         { path: 'shifts', component: ShiftsComponent },
         { path: 'cash', children: [
