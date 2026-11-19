@@ -228,3 +228,9 @@ Paginación y XLSX usan los filtros del último resultado correcto, aunque el fo
 `/admin/reports/tax-associations` muestra la asociación vigente de cada elemento del menú, su estado activo/inactivo, categoría, súper categoría, clase de impuesto y porcentaje literal del backend, incluida tasa cero. No añade filtros por fecha porque la API no los admite.
 
 La consulta se pagina de 20 en 20. El XLSX se descarga desde el mismo endpoint con format=xlsx, sin page, y contiene todos los resultados del restaurante. Mantiene resultados ante errores, rechaza archivos inválidos y libera la URL temporal de descarga. Los enlaces de Reportes conectan RFA-033, RFA-034 y RFA-035.
+
+### Resumen de ventas · RFA-036
+
+`/admin/reports/sales-summary` consulta el rango inclusivo from/to en el backend real. Muestra el desglose de órdenes (descuentos, canje, impuestos, envío, propina y ajuste por tarjeta), ventas externas y comisiones, y los totales consolidados devueltos por Laravel. Usa la moneda de configuración y la zona horaria de la respuesta; no calcula importes en el navegador.
+
+El XLSX se solicita al mismo endpoint con format=xlsx y las fechas del último reporte consultado correctamente, incluso si el formulario tiene cambios sin aplicar. Conserva la vista ante errores temporales y respeta la sesión del Administrador. Este módulo expone el filtro por fechas; los filtros opcionales por horario y caja de la API quedan fuera de esta pantalla.
