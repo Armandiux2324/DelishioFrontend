@@ -222,3 +222,9 @@ Incluye ventas totales, ticket promedio, número de ventas, órdenes creadas/abi
 `/admin/reports/orders` consulta los tipos paid, open y online con rango inclusivo from/to. Pagadas filtra por cierre; abiertas incluye open/sent por creación; en línea consulta customer_app por creación. La tabla muestra los datos paginados del backend y ofrece un detalle de solo lectura con importes, fechas y estado del pago en línea cuando existe.
 
 Paginación y XLSX usan los filtros del último resultado correcto, aunque el formulario tenga cambios sin consultar. La exportación no envía page y contiene todas las órdenes que coincidan con el tipo/rango. Conserva el reporte ante errores, valida los archivos y libera la URL de descarga. Los enlaces de Reportes permiten alternar RFA-033 y RFA-034.
+
+## Reporte de asociación de impuestos (RFA-035)
+
+`/admin/reports/tax-associations` muestra la asociación vigente de cada elemento del menú, su estado activo/inactivo, categoría, súper categoría, clase de impuesto y porcentaje literal del backend, incluida tasa cero. No añade filtros por fecha porque la API no los admite.
+
+La consulta se pagina de 20 en 20. El XLSX se descarga desde el mismo endpoint con format=xlsx, sin page, y contiene todos los resultados del restaurante. Mantiene resultados ante errores, rechaza archivos inválidos y libera la URL temporal de descarga. Los enlaces de Reportes conectan RFA-033, RFA-034 y RFA-035.
