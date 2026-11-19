@@ -1,3 +1,4 @@
+import {DashboardData,DashboardFilter} from './dashboard.models';
 import {ExternalSale,ExternalSaleInput,ExternalSalesPage} from './external-platform-sale.models';
 import {CustomerPage,CustomerRestaurant,CustomerMenuItem,CustomerPromotion,CustomerOrder,CustomerOrderInput,CustomerPayment,CustomerBalancesPage} from './customer.models';
 import {ChefQueuePage,ChefQueueItem,PreparationStatus} from './chef-queue.models';
@@ -154,6 +155,7 @@ export class ApiService {
   getExternalPlatformSales(page=1){return this.client.get<ExternalSalesPage>('/external-platform-sales',{...this.auth(),params:{page}});}
   getExternalPlatformSale(id:number){return this.client.get<{data:ExternalSale}>('/external-platform-sales/'+id,this.auth());}
   createExternalPlatformSale(payload:ExternalSaleInput){return this.client.post<{data:ExternalSale}>('/external-platform-sales',payload,this.auth());}
+  getAdminDashboard(filter:DashboardFilter){return this.client.get<{data:DashboardData}>('/admin/dashboard',{...this.auth(),params:filter});}
   getWaiterOrder(id: number) { return this.client.get<{data:WaiterOrder}>('/waiter/orders/' + id, this.auth()); }
   createWaiterOrder(payload: CreateWaiterOrder) { return this.client.post<{data:WaiterOrder}>('/waiter/orders', payload, this.auth()); }
   getWaiterMenu(page = 1) { return this.client.get<CatalogPage<MenuItem>>('/waiter/menu-items', { ...this.auth(), params: { page } }); }

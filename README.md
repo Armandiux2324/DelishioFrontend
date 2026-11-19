@@ -204,3 +204,9 @@ La validación local de integración utiliza Laravel con SQLite temporal y Strip
 Administrador: `/admin/external-sales`. Mesero: `/mesero/external-sales`. Incluye listado paginado, detalle y registro; no ofrece edición ni eliminación porque la API no las permite. Plataformas: doordash, ubereats, didi y rappi. Captura total, comisión, fecha opcional y de 1 a 100 partidas con descripción, cantidad, precio unitario y vinculación opcional al menú. El neto y la identidad del empleado proceden de Laravel. La fecha se introduce en hora local del dispositivo y se envía como instante ISO; si se omite, la asigna el servidor.
 
 El total de la plataforma es independiente de la suma de partidas. Registrar estas ventas no genera cobros ni órdenes de cocina y no descuenta inventario. Ante un fallo de resultado incierto, el formulario bloquea el reenvío y ofrece revisar las ventas recientes; no hace reintentos automáticos. La API no dispone de clave de idempotencia para este registro.
+
+## Dashboard del Administrador (RFA-001)
+
+`/admin` consulta el dashboard real con Hoy, Ayer, Últimos 7 días o rango personalizado inclusivo. Solo envía period o from/to; el restaurante se obtiene de la sesión. Las fechas efectivas y la zona horaria se muestran tal como las devuelve el backend. La moneda procede de la configuración del restaurante.
+
+Incluye ventas totales, ticket promedio, número de ventas, órdenes creadas/abiertas, las 24 horas con sus importes, métodos de pago con ajuste separado, categorías y top 5 empleados POS. Conserva las agrupaciones del backend y no recalcula totales. Si falla una actualización mantiene el último resultado identificado por sus fechas y muestra el error. No necesita dependencias de gráficas nuevas.
