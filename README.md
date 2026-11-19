@@ -234,3 +234,11 @@ La consulta se pagina de 20 en 20. El XLSX se descarga desde el mismo endpoint c
 `/admin/reports/sales-summary` consulta el rango inclusivo from/to en el backend real. Muestra el desglose de órdenes (descuentos, canje, impuestos, envío, propina y ajuste por tarjeta), ventas externas y comisiones, y los totales consolidados devueltos por Laravel. Usa la moneda de configuración y la zona horaria de la respuesta; no calcula importes en el navegador.
 
 El XLSX se solicita al mismo endpoint con format=xlsx y las fechas del último reporte consultado correctamente, incluso si el formulario tiene cambios sin aplicar. Conserva la vista ante errores temporales y respeta la sesión del Administrador. Este módulo expone el filtro por fechas; los filtros opcionales por horario y caja de la API quedan fuera de esta pantalla.
+
+### Reporte de productos · RFA-037
+
+`/admin/reports/products` consulta el endpoint real con fechas inclusivas desde/hasta y filtros opcionales de súper categoría, categoría y modificador (texto parcial sin distinguir mayúsculas, hasta 255 caracteres). Los selectores cargan todas las páginas del catálogo del restaurante; cambiar de súper categoría limpia una categoría incompatible.
+
+Presenta cantidades vendidas/devueltas, costo unitario estimado con cuatro decimales, ventas brutas, descuentos/cortesías, canje, devolución de consumo e impuesto, ventas netas, impuesto neto y total con impuesto. Los importes y totales provienen de Laravel. Las ventas usan la fecha de cierre y las devoluciones su propia fecha; se admiten totales negativos para devoluciones de ventas anteriores. El costo estimado usa la receta actual, y el impuesto se distribuye con tasas actuales como ponderación. No incluye propina, envío, ajuste por tarjeta ni ventas externas.
+
+El XLSX se solicita al mismo endpoint con format=xlsx y todos los filtros del último reporte consultado correctamente; editar el formulario sin consultar conserva la exportación del reporte visible.
