@@ -1,0 +1,4 @@
+export type OrdersReportType='paid'|'open'|'online';
+export interface OrdersReportFilter{type:OrdersReportType;from:string;to:string}
+export interface ReportOrder{id:number;source:'pos'|'customer_app';status:'open'|'sent'|'closed'|'cancelled';service_type:'dine_in'|'takeout'|'delivery';table_number:string|null;waiter_employee_id:number|null;cash_register_id:number;subtotal:string;discount_total:string;loyalty_redeemed_amount:string;tax_total:string;delivery_fee:string|null;surcharge_total:string;tip_amount:string;total:string;advance_payment_status?:'pending'|'authorized'|'captured'|'voided'|'refund_pending'|'refunded'|'refund_failed'|null;created_at:string;sent_at:string|null;closed_at:string|null}
+export interface OrdersReportPage{data:ReportOrder[];filters:OrdersReportFilter&{timezone:string};meta:{current_page:number;last_page:number;total:number}}

@@ -216,3 +216,9 @@ Incluye ventas totales, ticket promedio, número de ventas, órdenes creadas/abi
 `/admin/reports/payment-transactions` consulta el rango inclusivo from/to en el endpoint real del backend. Muestra efectivo, tarjeta, transferencia y pedidos en línea, con transacciones, monto base, ajuste por tarjeta y total, junto a los totales devueltos por Laravel. Usa la moneda de configuración y la zona horaria de la respuesta; no recalcula importes ni agrega ventas externas.
 
 “Exportar periodo mostrado (XLSX)” descarga el archivo del mismo endpoint con format=xlsx y las fechas del último reporte correcto, aunque el formulario tenga cambios sin aplicar. Los errores JSON recibidos como Blob se muestran como validación; no se guardan como Excel. La descarga autenticada valida el tipo de archivo, genera un nombre con el rango y libera su URL temporal.
+
+## Reporte de órdenes (RFA-034)
+
+`/admin/reports/orders` consulta los tipos paid, open y online con rango inclusivo from/to. Pagadas filtra por cierre; abiertas incluye open/sent por creación; en línea consulta customer_app por creación. La tabla muestra los datos paginados del backend y ofrece un detalle de solo lectura con importes, fechas y estado del pago en línea cuando existe.
+
+Paginación y XLSX usan los filtros del último resultado correcto, aunque el formulario tenga cambios sin consultar. La exportación no envía page y contiene todas las órdenes que coincidan con el tipo/rango. Conserva el reporte ante errores, valida los archivos y libera la URL de descarga. Los enlaces de Reportes permiten alternar RFA-033 y RFA-034.
