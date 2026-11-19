@@ -210,3 +210,9 @@ El total de la plataforma es independiente de la suma de partidas. Registrar est
 `/admin` consulta el dashboard real con Hoy, Ayer, Últimos 7 días o rango personalizado inclusivo. Solo envía period o from/to; el restaurante se obtiene de la sesión. Las fechas efectivas y la zona horaria se muestran tal como las devuelve el backend. La moneda procede de la configuración del restaurante.
 
 Incluye ventas totales, ticket promedio, número de ventas, órdenes creadas/abiertas, las 24 horas con sus importes, métodos de pago con ajuste separado, categorías y top 5 empleados POS. Conserva las agrupaciones del backend y no recalcula totales. Si falla una actualización mantiene el último resultado identificado por sus fechas y muestra el error. No necesita dependencias de gráficas nuevas.
+
+## Reporte de transacciones por tipo de pago (RFA-033)
+
+`/admin/reports/payment-transactions` consulta el rango inclusivo from/to en el endpoint real del backend. Muestra efectivo, tarjeta, transferencia y pedidos en línea, con transacciones, monto base, ajuste por tarjeta y total, junto a los totales devueltos por Laravel. Usa la moneda de configuración y la zona horaria de la respuesta; no recalcula importes ni agrega ventas externas.
+
+“Exportar periodo mostrado (XLSX)” descarga el archivo del mismo endpoint con format=xlsx y las fechas del último reporte correcto, aunque el formulario tenga cambios sin aplicar. Los errores JSON recibidos como Blob se muestran como validación; no se guardan como Excel. La descarga autenticada valida el tipo de archivo, genera un nombre con el rango y libera su URL temporal.
