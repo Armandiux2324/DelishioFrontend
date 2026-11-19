@@ -1,3 +1,5 @@
+import '@angular/common/locales/global/es';
+import {DashboardComponent} from './dashboard/dashboard.component';
 import {ExternalSalesComponent} from '../operations/external-sales.component';
 import { OperationsModule } from '../operations/operations.module';
 import { ShiftsComponent } from '../operations/shifts.component';
@@ -18,13 +20,13 @@ import { AdminLayoutComponent } from '../../layouts/admin-layout/admin-layout.co
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-  declarations: [AdminLayoutComponent, SettingsComponent, CatalogComponent, InventoryComponent, MenuComponent, EmployeesComponent, CustomersComponent, PromotionsComponent],
+  declarations: [DashboardComponent, AdminLayoutComponent, SettingsComponent, CatalogComponent, InventoryComponent, MenuComponent, EmployeesComponent, CustomersComponent, PromotionsComponent],
   imports: [
     CommonModule, SharedModule, OperationsModule, ReactiveFormsModule,
     RouterModule.forChild([{
       path: '',
       component: AdminLayoutComponent,
-      children: [{path:'external-sales',component:ExternalSalesComponent},
+      children: [{path:'',component:DashboardComponent},{path:'external-sales',component:ExternalSalesComponent},
         { path: 'settings', component: SettingsComponent },
         { path: 'shifts', component: ShiftsComponent },
         { path: 'cash', children: [
