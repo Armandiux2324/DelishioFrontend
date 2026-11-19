@@ -1,3 +1,4 @@
+import {ProductsReportFilter,ProductsReportData} from './products-report.models';
 import {SalesSummaryFilter,SalesSummaryData} from './sales-summary.models';
 import {TaxAssociationsPage} from './tax-associations.models';
 import {OrdersReportFilter,OrdersReportPage} from './orders-report.models';
@@ -160,6 +161,8 @@ export class ApiService {
   getExternalPlatformSale(id:number){return this.client.get<{data:ExternalSale}>('/external-platform-sales/'+id,this.auth());}
   createExternalPlatformSale(payload:ExternalSaleInput){return this.client.post<{data:ExternalSale}>('/external-platform-sales',payload,this.auth());}
   getAdminDashboard(filter:DashboardFilter){return this.client.get<{data:DashboardData}>('/admin/dashboard',{...this.auth(),params:filter});}
+  getProductsReport(filter:ProductsReportFilter){return this.client.get<{data:ProductsReportData}>('/admin/reports/products',{...this.auth(),params:filter});}
+  async exportProductsReport(filter:ProductsReportFilter){try{return await this.client.get<Blob>('/admin/reports/products',{...this.auth(),params:{...filter,format:'xlsx'},responseType:'blob'});}catch(error){if(axios.isAxiosError(error)&&error.response?.data instanceof Blob){try{error.response.data=JSON.parse(await error.response.data.text());}catch{}}throw error;}}
   getSalesSummaryReport(filter:SalesSummaryFilter){return this.client.get<{data:SalesSummaryData}>('/admin/reports/sales-summary',{...this.auth(),params:filter});}
   async exportSalesSummaryReport(filter:SalesSummaryFilter){try{return await this.client.get<Blob>('/admin/reports/sales-summary',{...this.auth(),params:{...filter,format:'xlsx'},responseType:'blob'});}catch(error){if(axios.isAxiosError(error)&&error.response?.data instanceof Blob){try{error.response.data=JSON.parse(await error.response.data.text());}catch{}}throw error;}}
   getPaymentTransactionsReport(filter:PaymentReportFilter){return this.client.get<{data:PaymentTransactionsData}>('/admin/reports/payment-transactions',{...this.auth(),params:filter});}

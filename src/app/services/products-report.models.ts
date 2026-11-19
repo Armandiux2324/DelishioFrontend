@@ -1,0 +1,4 @@
+export interface ProductsReportFilter {from:string;to:string;super_category_id?:number|string;category_id?:number|string;modifier?:string}
+export interface ProductReportTotals {quantity_sold:number;quantity_returned:number;gross_sales:string;discount_total:string;loyalty_redeemed_amount:string;returns_amount:string;returns_tax_amount:string;net_sales:string;tax_total:string;total_sales:string}
+export interface ProductReportRow extends ProductReportTotals {menu_item_id:number;menu_item_name:string;super_category:{id:number;name:string};category:{id:number;name:string};estimated_unit_cost:string|null}
+export interface ProductsReportData {filters:ProductsReportFilter;timezone:string;cost_basis:'current_recipe';returns_date_basis:'returned_at';tax_basis:'allocated_order_tax_using_current_rates';products:ProductReportRow[];totals:ProductReportTotals}
