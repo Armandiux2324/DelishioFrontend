@@ -288,3 +288,13 @@ El XLSX conserva todos los filtros del último reporte consultado, incluso si ha
 `/mesero/orders` consulta automáticamente la página actual del listado o el detalle activo cada cinco segundos mediante los endpoints reales del Mesero. El detalle conserva sus componentes mientras recibe cambios pending, in_preparation y ready; no requiere pulsar Actualizar.
 
 El polling evita consultas simultáneas, pausa con la pestaña oculta o cualquier diálogo abierto (edición, autorización o cobro) y se reanuda al volver a la pestaña o cerrar el diálogo. No modifica los formularios. Conserva los últimos datos ante errores temporales y muestra el error; reintenta la consulta. Un 404 del detalle detiene los reintentos hasta una consulta manual. Las órdenes cerradas/canceladas dejan de consultarse automáticamente. Salir de la página cancela el temporizador y el listener; respuestas tardías de una página o sesión anterior no se aplican.
+
+### QR del Cliente y cámara del Mesero · RFM-010
+
+En `/cliente/points`, el UUID obtenido del backend se representa como QR SVG de alto contraste, con margen de lectura, junto al código de texto de respaldo. Se elimina de la vista al cambiar de sesión. No se envía a un servicio externo para generar la imagen.
+
+En Vincular cliente de la orden POS, Escanear QR del Cliente abre la cámara tras la acción del usuario, preferentemente la trasera. Un UUID válido detiene la lectura y realiza una sola petición al endpoint existente de vinculación; URLs y otros contenidos no se aceptan. Conserva la entrada manual y los mensajes de validación del backend.
+
+La cámara requiere HTTPS o localhost y permiso del navegador. Se detiene al leer, cancelar/cerrar el diálogo, ocultar la pestaña, cambiar de orden o sesión, o salir de la vista. También libera un stream autorizado después de cancelar y controles de lectura que terminen de iniciar tarde. Los errores de permisos, cámara ausente o indisponibilidad permiten reintentar o escribir el código.
+
+ZXing se carga bajo demanda para generación/lectura local, con versiones fijadas compatibles con Node 22. Tras hacer pull, ejecuta `npm ci` para instalar las nuevas dependencias. La prueba de integración usa Laravel con SQLite temporal y una cámara simulada de Chrome que recibe vídeo Y4M con un QR real; la cámara física en iPad/Android queda pendiente de verificar.

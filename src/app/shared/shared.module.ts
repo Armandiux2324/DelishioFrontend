@@ -1,3 +1,5 @@
+import {CustomerQrComponent} from './customer-qr/customer-qr.component';
+import {CustomerQrScannerComponent} from './customer-qr/customer-qr-scanner.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -18,7 +20,7 @@ import { PageHeadingComponent } from './page-heading/page-heading.component';
 import { PanelComponent } from './panel/panel.component';
 import { SessionHeaderComponent } from './session-header/session-header.component';
 
-const components = [
+const components = [CustomerQrComponent,CustomerQrScannerComponent,
   AppShellComponent, ButtonDirective, DialogComponent, FeedbackComponent,
   NavigationComponent, PageHeadingComponent, PanelComponent, SessionHeaderComponent, FormFeedbackComponent,
 ];
