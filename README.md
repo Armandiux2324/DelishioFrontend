@@ -264,3 +264,21 @@ Las rutas del Administrador integran los endpoints reales con fechas inclusivas 
 | RFA-045 | employee-product-sales | Cierre; empleado y rol actual opcionales. Ventas por empleado/elemento con descuentos y canje. No descuenta devoluciones. |
 
 RFA-045 carga todas las páginas de empleados del restaurante y admite reintento si falla. Todos los totales e importes provienen de Laravel; el cliente solo da formato de fecha, moneda USD/MXN y porcentaje. Incluye español/inglés, estados de carga/vacío/error y protección ante respuestas de una ruta o sesión anterior. El menú común de reportes es desplegable para no ocupar la pantalla en móvil.
+
+### Reportes RFA-046 a RFA-052
+
+Se agregan al menú común los siete reportes finales, con sus filtros reales y exportación XLSX completa. Todos los importes y horas provienen del backend; la interfaz solo formatea moneda y duración.
+
+| Requisito | Ruta bajo /admin/reports | Filtros y comportamiento |
+| --- | --- | --- |
+| RFA-046 | work-shifts | Fecha, empleado y rol; turnos que se superponen con el periodo, duración recortada y turnos abiertos sin estimación. |
+| RFA-047 | payroll | Fecha, empleado y rol; zona horaria del restaurante, umbral semanal y multiplicador vigentes, horas ordinarias/extra y pago estimado. Incluye las marcas de cada turno; los abiertos no generan pago. |
+| RFA-048 | sales-vs-labor | Fecha, empleado y rol; misma zona horaria y costo laboral con horas extra de la nómina. Porcentaje indefinido si las ventas son cero. |
+| RFA-049 | cash-closures | Fecha de cierre y caja/turno opcional; apertura, ventas y movimientos en efectivo, propinas, efectivo esperado/contado y diferencia. No vuelve a sumar propinas al esperado. |
+| RFA-050 | menu-audit | Fecha, empleado y elemento del menú; identidad, acción y valores anteriores/nuevos completos. Muestra los conteos por acción. |
+| RFA-051 | inventory-value | Elemento opcional; valoración actual, sin fechas. Conserva cuatro decimales del costo unitario. |
+| RFA-052 | inventory-losses | Fecha de registro y elemento opcional; detalle y totales de cantidad por elemento/unidad. No suma unidades diferentes ni inventa un costo histórico de pérdida. |
+
+Los filtros por caja, menú e inventario aceptan IDs con sugerencias de todas las páginas. La auditoría también acepta el ID de un empleado histórico aunque ya no aparezca entre las sugerencias. El backend valida que los IDs pertenezcan al restaurante. Los errores de carga de sugerencias permiten reintentar y no impiden usar un ID conocido.
+
+El XLSX conserva todos los filtros del último reporte consultado, incluso si hay cambios pendientes en el formulario. El valor de inventario se exporta sin fechas. La auditoría muestra JSON escapado sin ejecutar HTML; conserva valores cero, false, null y arreglos vacíos.
