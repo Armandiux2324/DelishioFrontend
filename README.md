@@ -282,3 +282,9 @@ Se agregan al menú común los siete reportes finales, con sus filtros reales y 
 Los filtros por caja, menú e inventario aceptan IDs con sugerencias de todas las páginas. La auditoría también acepta el ID de un empleado histórico aunque ya no aparezca entre las sugerencias. El backend valida que los IDs pertenezcan al restaurante. Los errores de carga de sugerencias permiten reintentar y no impiden usar un ID conocido.
 
 El XLSX conserva todos los filtros del último reporte consultado, incluso si hay cambios pendientes en el formulario. El valor de inventario se exporta sin fechas. La auditoría muestra JSON escapado sin ejecutar HTML; conserva valores cero, false, null y arreglos vacíos.
+
+### Estado de preparación del Mesero · RFM-004
+
+`/mesero/orders` consulta automáticamente la página actual del listado o el detalle activo cada cinco segundos mediante los endpoints reales del Mesero. El detalle conserva sus componentes mientras recibe cambios pending, in_preparation y ready; no requiere pulsar Actualizar.
+
+El polling evita consultas simultáneas, pausa con la pestaña oculta o cualquier diálogo abierto (edición, autorización o cobro) y se reanuda al volver a la pestaña o cerrar el diálogo. No modifica los formularios. Conserva los últimos datos ante errores temporales y muestra el error; reintenta la consulta. Un 404 del detalle detiene los reintentos hasta una consulta manual. Las órdenes cerradas/canceladas dejan de consultarse automáticamente. Salir de la página cancela el temporizador y el listener; respuestas tardías de una página o sesión anterior no se aplican.
