@@ -242,3 +242,9 @@ El XLSX se solicita al mismo endpoint con format=xlsx y las fechas del último r
 Presenta cantidades vendidas/devueltas, costo unitario estimado con cuatro decimales, ventas brutas, descuentos/cortesías, canje, devolución de consumo e impuesto, ventas netas, impuesto neto y total con impuesto. Los importes y totales provienen de Laravel. Las ventas usan la fecha de cierre y las devoluciones su propia fecha; se admiten totales negativos para devoluciones de ventas anteriores. El costo estimado usa la receta actual, y el impuesto se distribuye con tasas actuales como ponderación. No incluye propina, envío, ajuste por tarjeta ni ventas externas.
 
 El XLSX se solicita al mismo endpoint con format=xlsx y todos los filtros del último reporte consultado correctamente; editar el formulario sin consultar conserva la exportación del reporte visible.
+
+### Reporte de cortesías · RFA-038
+
+`/admin/reports/courtesies` integra el reporte de órdenes con cortesías otorgadas definido en la especificación. Consulta el endpoint real con fechas inclusivas desde/hasta. Filtra por la fecha del otorgamiento, no por el cierre, e incluye órdenes de cualquier estado. Presenta fecha/hora en la zona horaria devuelta por la API, orden y estado, aplicación a orden/partida, porcentaje, monto autorizado, IDs del empleado solicitante y Administrador autorizante y turno. No muestra ni solicita PIN.
+
+Las cantidades de cortesías, órdenes distintas y monto autorizado vienen del backend; no representan ventas cobradas. El XLSX completo se solicita al mismo endpoint con format=xlsx y las fechas del último reporte consultado correctamente, aunque el formulario tenga cambios pendientes. Incluye traducciones ES/EN, formato USD/MXN y estados de carga, vacío y error.
