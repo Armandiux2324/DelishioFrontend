@@ -1,3 +1,4 @@
+import {AdminReportKind,AdminReportFilter,AdminReportData} from './admin-reports.models';
 import {CourtesiesFilter,CourtesiesData} from './courtesies.models';
 import {ProductsReportFilter,ProductsReportData} from './products-report.models';
 import {SalesSummaryFilter,SalesSummaryData} from './sales-summary.models';
@@ -164,6 +165,8 @@ export class ApiService {
   getAdminDashboard(filter:DashboardFilter){return this.client.get<{data:DashboardData}>('/admin/dashboard',{...this.auth(),params:filter});}
   getProductsReport(filter:ProductsReportFilter){return this.client.get<{data:ProductsReportData}>('/admin/reports/products',{...this.auth(),params:filter});}
   async exportProductsReport(filter:ProductsReportFilter){try{return await this.client.get<Blob>('/admin/reports/products',{...this.auth(),params:{...filter,format:'xlsx'},responseType:'blob'});}catch(error){if(axios.isAxiosError(error)&&error.response?.data instanceof Blob){try{error.response.data=JSON.parse(await error.response.data.text());}catch{}}throw error;}}
+  getAdminReport(kind:AdminReportKind,filter:AdminReportFilter){return this.client.get<{data:AdminReportData}>('/admin/reports/'+kind,{...this.auth(),params:filter});}
+  async exportAdminReport(kind:AdminReportKind,filter:AdminReportFilter){try{return await this.client.get<Blob>('/admin/reports/'+kind,{...this.auth(),params:{...filter,format:'xlsx'},responseType:'blob'});}catch(error){if(axios.isAxiosError(error)&&error.response?.data instanceof Blob){try{error.response.data=JSON.parse(await error.response.data.text());}catch{}}throw error;}}
   getCourtesiesReport(filter:CourtesiesFilter){return this.client.get<{data:CourtesiesData}>('/admin/reports/courtesies',{...this.auth(),params:filter});}
   async exportCourtesiesReport(filter:CourtesiesFilter){try{return await this.client.get<Blob>('/admin/reports/courtesies',{...this.auth(),params:{...filter,format:'xlsx'},responseType:'blob'});}catch(error){if(axios.isAxiosError(error)&&error.response?.data instanceof Blob){try{error.response.data=JSON.parse(await error.response.data.text());}catch{}}throw error;}}
   getSalesSummaryReport(filter:SalesSummaryFilter){return this.client.get<{data:SalesSummaryData}>('/admin/reports/sales-summary',{...this.auth(),params:filter});}
