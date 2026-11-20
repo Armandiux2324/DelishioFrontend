@@ -248,3 +248,19 @@ El XLSX se solicita al mismo endpoint con format=xlsx y todos los filtros del ú
 `/admin/reports/courtesies` integra el reporte de órdenes con cortesías otorgadas definido en la especificación. Consulta el endpoint real con fechas inclusivas desde/hasta. Filtra por la fecha del otorgamiento, no por el cierre, e incluye órdenes de cualquier estado. Presenta fecha/hora en la zona horaria devuelta por la API, orden y estado, aplicación a orden/partida, porcentaje, monto autorizado, IDs del empleado solicitante y Administrador autorizante y turno. No muestra ni solicita PIN.
 
 Las cantidades de cortesías, órdenes distintas y monto autorizado vienen del backend; no representan ventas cobradas. El XLSX completo se solicita al mismo endpoint con format=xlsx y las fechas del último reporte consultado correctamente, aunque el formulario tenga cambios pendientes. Incluye traducciones ES/EN, formato USD/MXN y estados de carga, vacío y error.
+
+### Reportes RFA-039 a RFA-045
+
+Las rutas del Administrador integran los endpoints reales con fechas inclusivas desde/hasta y XLSX completo generado por el backend. La exportación conserva los filtros del último reporte visible, aunque el formulario tenga cambios pendientes.
+
+| Requisito | Ruta bajo /admin/reports | Base de fecha y contenido |
+| --- | --- | --- |
+| RFA-039 | discounts | Fecha de aplicación; monto autorizado, alcance y trazabilidad. Excluye cortesías y canjes. |
+| RFA-040 | profit-margins | Cierre; costo y ganancia estimados con receta actual. Costos/márgenes desconocidos se muestran como —. Margen total solo de productos con costo. No descuenta devoluciones. |
+| RFA-041 | taxes-and-exemptions | Impuestos por cierre y exenciones por aplicación, en tablas separadas. |
+| RFA-042 | tips | Cierre; órdenes con propina positiva. |
+| RFA-043 | cancellations | Cancelación de órdenes y partidas por separado. Registros antiguos sin fecha usan creación, indicada por fila. |
+| RFA-044 | external-platform-sales | Fecha de venta registrada; importe bruto, comisión y neto por plataforma. Neto no equivale a utilidad. |
+| RFA-045 | employee-product-sales | Cierre; empleado y rol actual opcionales. Ventas por empleado/elemento con descuentos y canje. No descuenta devoluciones. |
+
+RFA-045 carga todas las páginas de empleados del restaurante y admite reintento si falla. Todos los totales e importes provienen de Laravel; el cliente solo da formato de fecha, moneda USD/MXN y porcentaje. Incluye español/inglés, estados de carga/vacío/error y protección ante respuestas de una ruta o sesión anterior. El menú común de reportes es desplegable para no ocupar la pantalla en móvil.

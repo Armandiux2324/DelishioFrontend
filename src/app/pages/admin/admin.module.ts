@@ -1,3 +1,6 @@
+import {AdminReportsComponent} from './reports/admin-reports.component';
+import {ReportNavigationComponent} from './reports/report-navigation.component';
+import {adminReportKinds} from '../../services/admin-reports.models';
 import {CourtesiesComponent} from './reports/courtesies.component';
 import {ProductsReportComponent} from './reports/products-report.component';
 import {SalesSummaryComponent} from './reports/sales-summary.component';
@@ -26,13 +29,13 @@ import { AdminLayoutComponent } from '../../layouts/admin-layout/admin-layout.co
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
-  declarations: [CourtesiesComponent,ProductsReportComponent,SalesSummaryComponent,TaxAssociationsComponent,OrdersReportComponent,PaymentTransactionsComponent,DashboardComponent, AdminLayoutComponent, SettingsComponent, CatalogComponent, InventoryComponent, MenuComponent, EmployeesComponent, CustomersComponent, PromotionsComponent],
+  declarations: [AdminReportsComponent,ReportNavigationComponent,CourtesiesComponent,ProductsReportComponent,SalesSummaryComponent,TaxAssociationsComponent,OrdersReportComponent,PaymentTransactionsComponent,DashboardComponent, AdminLayoutComponent, SettingsComponent, CatalogComponent, InventoryComponent, MenuComponent, EmployeesComponent, CustomersComponent, PromotionsComponent],
   imports: [
     CommonModule, SharedModule, OperationsModule, ReactiveFormsModule,
     RouterModule.forChild([{
       path: '',
       component: AdminLayoutComponent,
-      children: [{path:'reports/courtesies',component:CourtesiesComponent},{path:'reports/products',component:ProductsReportComponent},{path:'reports/sales-summary',component:SalesSummaryComponent},{path:'reports/tax-associations',component:TaxAssociationsComponent},{path:'reports/orders',component:OrdersReportComponent},{path:'reports',pathMatch:'full',redirectTo:'reports/payment-transactions'},{path:'reports/payment-transactions',component:PaymentTransactionsComponent},{path:'',component:DashboardComponent},{path:'external-sales',component:ExternalSalesComponent},
+      children: [...adminReportKinds.map(report=>({path:'reports/'+report,component:AdminReportsComponent,data:{report}})),{path:'reports/courtesies',component:CourtesiesComponent},{path:'reports/products',component:ProductsReportComponent},{path:'reports/sales-summary',component:SalesSummaryComponent},{path:'reports/tax-associations',component:TaxAssociationsComponent},{path:'reports/orders',component:OrdersReportComponent},{path:'reports',pathMatch:'full',redirectTo:'reports/payment-transactions'},{path:'reports/payment-transactions',component:PaymentTransactionsComponent},{path:'',component:DashboardComponent},{path:'external-sales',component:ExternalSalesComponent},
         { path: 'settings', component: SettingsComponent },
         { path: 'shifts', component: ShiftsComponent },
         { path: 'cash', children: [
