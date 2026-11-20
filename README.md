@@ -233,7 +233,7 @@ La consulta se pagina de 20 en 20. El XLSX se descarga desde el mismo endpoint c
 
 `/admin/reports/sales-summary` consulta el rango inclusivo from/to en el backend real. Muestra el desglose de órdenes (descuentos, canje, impuestos, envío, propina y ajuste por tarjeta), ventas externas y comisiones, y los totales consolidados devueltos por Laravel. Usa la moneda de configuración y la zona horaria de la respuesta; no calcula importes en el navegador.
 
-El XLSX se solicita al mismo endpoint con format=xlsx y las fechas del último reporte consultado correctamente, incluso si el formulario tiene cambios sin aplicar. Conserva la vista ante errores temporales y respeta la sesión del Administrador. Este módulo expone el filtro por fechas; los filtros opcionales por horario y caja de la API quedan fuera de esta pantalla.
+El XLSX se solicita al mismo endpoint con format=xlsx y las fechas del último reporte consultado correctamente, incluso si el formulario tiene cambios sin aplicar. Conserva la vista ante errores temporales y respeta la sesión del Administrador. Incluye horario opcional (ambas horas, con segundos, aplicado a cada día del periodo) y terminal/caja opcional. Las horas se envían como HH:mm:ss y el reporte visible muestra la zona horaria del backend. Al seleccionar una caja se excluyen ventas externas y órdenes no asociadas a esa caja. El selector carga todas las páginas de cajas abiertas y cerradas; permite reintentar si falla. El XLSX conserva las fechas, horario y caja del último reporte consultado correctamente, aunque existan cambios pendientes en el formulario.
 
 ### Reporte de productos · RFA-037
 
